@@ -1,0 +1,272 @@
+{
+  "metadata": {
+    "timestamp": "2025-09-04T16:25:28.757088",
+    "evaluation_type": "single_rag_evaluation_hybrid",
+    "dataset_size": 10,
+    "rags_evaluated": [
+      "hybrid"
+    ],
+    "model_used": "gpt-5-nano"
+  },
+  "summary": {
+    "hybrid": {
+      "rag_name": "Hybrid RAG (BM25 + Semantic)",
+      "metrics": {
+        "faithfulness": 0.9800000000000001,
+        "answer_relevancy": 0.8606399541109713,
+        "context_precision": 0.5937450396636779,
+        "context_recall": 0.6
+      },
+      "performance": {
+        "average_execution_time": 9.927,
+        "total_input_tokens": 14033,
+        "total_output_tokens": 15481,
+        "total_cost": 0.0,
+        "average_cost_per_question": 0.0,
+        "overall_average_score": 0.759
+      }
+    }
+  },
+  "question_by_question": [
+    {
+      "question_id": 1,
+      "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+      "ground_truth": "El Ginecobstetra en la semana 28 - 30 y semana 34 – 36.",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Debe reevaluarse el riesgo clínico de una gestante con embarazo de curso normal al momento de la inscripción al control prenatal y luego en cada trimestre, realizando la revaloración en las ventanas de 14–27, 28–32 y 33–42 semanas (utilizando la escala de Herrera & Hurtado). Según el nivel de riesgo, la evaluación debe ser gestionada por: gestantes de bajo riesgo, por una enfermera o un médico general; y gestantes clasificadas como alto riesgo, con continuidad de la atención por un equipo especializado multidisciplinario. Adicionalmente, se recomienda una valoración de riesgo psicosocial en el momento de la inscripción y en cada trimestre, con remisión cuando se identifique riesgo.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8807688374893727,
+            "context_precision": 0.49999999995,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+            "execution_time": 9.619949579238892,
+            "input_tokens": 1539,
+            "output_tokens": 1568,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 2,
+      "question": "Cual es la semana ideal para iniciar los controles prenatales",
+      "ground_truth": "Se recomienda realizar el primer control prenatal en el primer trimestre, idealmente antes de la semana 10 de gestación.",
+      "rag_results": {
+        "hybrid": {
+          "answer": "La semana ideal para iniciar los controles prenatales es antes de la semana 12 de embarazo (preferentemente antes de la semana 12). Esta recomendación se apoya en las guías que señalan que el primer control prenatal debe realizarse preferentemente antes de la semana 12 y que la primera visita debe durar entre 30 y 40 minutos.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9834136444541931,
+            "context_precision": 0.2666666666577778,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es la semana ideal para iniciar los controles prenatales",
+            "execution_time": 5.731450319290161,
+            "input_tokens": 1460,
+            "output_tokens": 1042,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 3,
+      "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+      "ground_truth": "después de la semana 16 – 18",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Se considera inicio tardío de los controles prenatales cuando la gestante inicia después de la semana 26 de gestación. En ese escenario, se recomienda que el primer control incluya todas las actividades recomendadas para los controles previos y las correspondientes a la consulta actual.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9734389207015371,
+            "context_precision": 0.0,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+            "execution_time": 9.926804065704346,
+            "input_tokens": 1427,
+            "output_tokens": 1538,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 4,
+      "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+      "ground_truth": "se recomienda un programa de diez citas. Para una mujer multípara con un embarazo de curso normal se recomienda un programa de siete citas",
+      "rag_results": {
+        "hybrid": {
+          "answer": "La cantidad ideal de controles prenatales no está definida de forma única en el contexto proporcionado. La evidencia indica que un modelo con un número reducido de citas se asocia con un aumento de la mortalidad perinatal, mientras que existen esquemas con un mayor número de controles (10 a 12) que podrían ser igualmente eficaces en términos de mortalidad y morbilidad materna y neonatal. En consecuencia, no hay una cifra universal establecida y, aun cuando se recomienda evitar intervalos muy largos entre consultas, la frecuencia óptima debe basarse en las necesidades de cada gestante y en la extrapolación de estos hallazgos, más que en una cifra fija.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.45833333331805554,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+            "execution_time": 13.029741764068604,
+            "input_tokens": 1568,
+            "output_tokens": 2197,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+      "ground_truth": "Se recomienda evaluar el riesgo biológico y psicosocial a todas las gestantes mediante la escala de Herrera & Hurtado",
+      "rag_results": {
+        "hybrid": {
+          "answer": "La herramienta es la escala ALPHA (Antenatal Psychosocial Health Assessment). La guía señala que la evaluación del riesgo psicosocial puede hacerse mediante escalas de clasificación de riesgo y, en particular, la escala ALPHA se utiliza para detectar problemas psicosociales, identificando un mayor número de casos que la atención prenatal de rutina y facilitando la clasificación de la gestante en alto o bajo riesgo y la remisión a atención especializada. Se recomienda realizar esta valoración de riesgo psicosocial en la inscripción y en cada control prenatal.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9531917598718381,
+            "context_precision": 0.7190476190356349,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+            "execution_time": 9.41952633857727,
+            "input_tokens": 1385,
+            "output_tokens": 1528,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 6,
+      "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+      "ground_truth": "Se recomienda que las gestantes de bajo riesgo reciban en el momento de la inscripción al control prenatal, y luego en cada trimestre, una valoración de riesgo psicosocial",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Se debe realizar la valoración de riesgo psicosocial al momento de la inscripción al control prenatal y, para gestantes de bajo riesgo, nuevamente en cada trimestre del embarazo. Además, durante el control prenatal se recomienda evaluar de forma rutinaria el estrés materno crónico, la ansiedad, los trastornos del sueño y el apoyo social, e identificar la depresión materna mediante un tamizaje trimestral. Si se identifica riesgo, se debe remitir a una consulta especializada garantizando la continuidad con el grupo que controla el embarazo. En este marco, pueden emplearse escalas de riesgo (p. ej., Herrera & Hurtado) para clasificar a las gestantes en categorías de bajo o alto riesgo.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.953440331963121,
+            "context_precision": 0.8338789682435448,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+            "execution_time": 9.058098554611206,
+            "input_tokens": 1357,
+            "output_tokens": 1432,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 7,
+      "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+      "ground_truth": "Se recomienda que, en el primer control prenatal, en la semana 28 de gestación y en la consulta de puerperio se identifique el riesgo de depresión postparto",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Se realiza el tamizaje cada trimestre del embarazo (trimestral) durante el control prenatal. La guía recomienda evaluar la depresión materna con un tamizaje trimestral porque las mujeres con depresión durante el embarazo tienen mayor riesgo de parto pretérmino y bajo peso al nacer.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.976921118808053,
+            "context_precision": 0.7928571428373214,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+            "execution_time": 9.570343255996704,
+            "input_tokens": 1162,
+            "output_tokens": 1411,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 8,
+      "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+      "ground_truth": "La probabilidad de parto vaginal es de 74% luego de una cesárea sin otros riesgos asociados.",
+      "rag_results": {
+        "hybrid": {
+          "answer": "La probabilidad de parto vaginal tras una cesárea previa es aproximadamente del 74%. En gestantes elegibles para una prueba de trabajo de parto tras cesárea, entre el 28% y el 70% culminan en parto vaginal. Factores asociados con parto vaginal tras una prueba de trabajo de parto incluyen haber tenido un parto vaginal previo, inducción del parto y un IMC <40; además, la evidencia indica que el trabajo de parto después de una cesárea previa es una opción razonable y segura, con riesgos maternos y neonatales similares a otras opciones.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9899736850970982,
+            "context_precision": 0.8666666666377778,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+            "execution_time": 9.779664278030396,
+            "input_tokens": 1327,
+            "output_tokens": 1476,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 9,
+      "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+      "ground_truth": "Se recomienda registrar el Índice de Masa Corporal (IMC) de la gestante en la cita de inscripción al control prenatal (alrededor de la semana 10) y con base en este establecer las metas de ganancia de peso durante la gestación de acuerdo a los siguientes parámetros: • IMC < 20 kg/m2 = ganancia entre 12 a 18 Kg • IMC entre 20 y 24,9 kg/m2 = ganancia entre 10 a 13 Kg • IMC entre 25 y 29,9 kg/m2 = ganancia entre 7 a 10 Kg • IMC > 30 kg/m2 = ganancia entre 6 a 7 Kg",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Las metas de ganancia de peso durante la gestación dependen del IMC pregestacional: IMC < 20 kg/m2 = 12–18 kg; IMC 20–24,9 kg/m2 = 10–13 kg; IMC 25–29,9 kg/m2 = 7–10 kg; IMC > 30 kg/m2 = 6–7 kg. Si la inscripción es tardía (después de la semana 16–18), se recomienda registrar el IMC pregestacional y establecer las metas de acuerdo a este. Además, se recomienda registrar el IMC al inicio y realizar seguimiento de la ganancia de peso en cada control prenatal; no se deben dar recomendaciones para bajar de peso durante la gestación y, si la ganancia es inadecuada a las 28 semanas, continuar el control con un equipo multidisciplinario especializado.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9614079537463743,
+            "context_precision": 0.9999999999666667,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+            "execution_time": 9.407219409942627,
+            "input_tokens": 1286,
+            "output_tokens": 1284,
+            "total_cost": 0.0
+          }
+        }
+      }
+    },
+    {
+      "question_id": 10,
+      "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+      "ground_truth": "A juicio del médico tratante, las intervenciones recomendadas para la reducción de la náusea y el vómito incluyen el jengibre, los antihistamínicos y la vitamina B6",
+      "rag_results": {
+        "hybrid": {
+          "answer": "Respuesta directa: el manejo de las náuseas y el vómito durante la primera mitad del embarazo combina medidas no farmacológicas con opciones farmacológicas, principalmente jengibre, antihistamínicos y vitamina B6 (pyridoxina). Las intervenciones no farmacológicas incluyen cambios en el hábito alimentario, uso de jengibre y acupuntura, y la mayoría de los cuadros se resuelven espontáneamente antes de las semanas 16 a 20 de gestación. En cuanto a farmacología, los antihistamínicos y la vitamina B6 han mostrado eficacia y seguridad; además, revisiones citadas señalan una reducción de las náuseas con antieméticos y con antihistamínicos (con posibles efectos de somnolencia asociada a los antihistamínicos). Específicamente, el jengibre se evaluó en 250 mg cuatro veces al día, como parte de la intervención farmacológica, en comparación con placebo.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9338432889781257,
+            "context_precision": 0.49999999999,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+            "execution_time": 13.731734275817871,
+            "input_tokens": 1522,
+            "output_tokens": 2005,
+            "total_cost": 0.0
+          }
+        }
+      }
+    }
+  ]
+}

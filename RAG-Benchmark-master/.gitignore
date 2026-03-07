@@ -1,0 +1,98 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Jupyter Notebooks
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Data files
+# Data/raw/*
+!Data/raw/.gitkeep
+# Data/processed/*
+!Data/processed/.gitkeep
+# Data/embeddings/*
+!Data/embeddings/.gitkeep
+
+
+# Results
+# results/*
+# !results/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Neo4j data
+neo4j/
+
+# Vector store files
+*.faiss
+*.index
+*_metadata.pkl
+
+# Temporary files
+temp/
+tmp/
+.tmp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Large model files
+*.bin
+*.safetensors
+*.onnx
+
+# API keys and secrets
+secrets.json
+credentials.json
