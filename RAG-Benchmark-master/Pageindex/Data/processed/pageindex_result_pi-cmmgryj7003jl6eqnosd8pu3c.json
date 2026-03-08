@@ -1,0 +1,135 @@
+{
+  "retrieval_id": "sr-cmmgrzura03uz6eqnbjpkgbl6",
+  "doc_id": "pi-cmmgryj7003jl6eqnosd8pu3c",
+  "status": "completed",
+  "query": "Resume este PDF en 5 puntos clave",
+  "retrieved_nodes": [
+    {
+      "id": "0000",
+      "title": "SECCIÓN 1. PREVENCIÓN Y DETECCIÓN TEMPRANA DE LAS ALTERACIONES DEL EMBARAZO.",
+      "metadata": [
+        "pi-cmmgryj7003jl6eqnosd8pu3c",
+        "guia_embarazo_parto_clean.pdf",
+        "",
+        "This document provides comprehensive clinical guidelines and recommendations for prenatal care, management of pregnancy complications, labor, delivery, and postpartum care, based on current evidence and expert consensus.",
+        "File",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "relevant_contents": [
+        [
+          {
+            "section_title": "SECCIÓN 1. PREVENCIÓN Y DETECCIÓN TEMPRANA DE LAS ALTERACIONES DEL EMBARAZO.",
+            "physical_index": "<physical_index_1>",
+            "relevant_content": "1. El control prenatal en embarazos de bajo riesgo o curso normal puede ser realizado por profesionales en enfermería capacitados o médicos generales, asegurando continuidad en la atención y que sea realizado por el mismo profesional o un pequeño grupo de profesionales. En algunos países, la partera es un profesional en enfermería con entrenamiento certificado en atención materno-infantil.\n\n2. La sección plantea 30 preguntas clave que guían la prevención y detección temprana de alteraciones en el embarazo, incluyendo aspectos como duración y frecuencia de consultas, registros documentales, detección de riesgos, manejo de antecedentes de cesárea, información a la gestante, actividades rutinarias, intervenciones para síntomas comunes (náuseas, reflujo, estreñimiento, hemorroides, síndrome varicoso, dolor lumbar, pubalgia, síndrome de túnel del carpo), vacunación, pruebas para crecimiento fetal y bienestar fetal, recomendaciones para viajes, contraindicaciones laborales, consejería nutricional, suplementos, control odontológico, estrategias para lactancia materna, tamización de infecciones y factores de alarma.\n\n3. Se enfatiza la importancia de la detección de riesgo durante el control prenatal para identificar gestaciones de curso normal y aquellas con posibles complicaciones, permitiendo un manejo oportuno.\n\n4. Se recomienda que la información proporcionada a la gestante durante los controles prenatales sea clara y adecuada, para promover la adherencia y el autocuidado.\n\n5. La prevención y detección temprana de alteraciones del embarazo se basa en un control prenatal estructurado, con intervenciones específicas para síntomas comunes y monitoreo constante del bienestar fetal y materno, apoyado en pruebas diagnósticas y tamización de infecciones."
+          }
+        ]
+      ]
+    },
+    {
+      "id": "0001",
+      "title": "RESUMEN Y DESCRIPCION DE LA EVIDENCIA",
+      "metadata": [
+        "pi-cmmgryj7003jl6eqnosd8pu3c",
+        "guia_embarazo_parto_clean.pdf",
+        "",
+        "This document provides comprehensive clinical guidelines and recommendations for prenatal care, management of pregnancy complications, labor, delivery, and postpartum care, based on current evidence and expert consensus.",
+        "File",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "relevant_contents": [
+        [
+          {
+            "section_title": "RESUMEN Y DESCRIPCION DE LA EVIDENCIA",
+            "physical_index": "<physical_index_3>",
+            "relevant_content": "1. A systematic review of three RCTs with 3,041 women in developing countries found no differences in prenatal care satisfaction or outcomes like preterm birth, cesarean, antepartum hemorrhage, urinary infection, anemia, and perinatal mortality between care by midwives/general practitioners versus gynecologists. However, midwives/general practitioners showed reduced preeclampsia (OR=0.37; 95% CI=0.22-0.64) and gestational hypertension (OR=0.56; 95% CI=0.45-0.70).\n\n2. Two systematic reviews (seven RCTs with 9,148 women and two RCTs with 1,815 women) comparing continuity of prenatal care by the same professional or small group versus multiple professionals showed that continuity reduced antepartum hospitalizations (OR=0.79; 95% CI=0.64-0.97), increased attendance to prenatal education (OR=0.58; 95% CI=0.41-0.81), reduced analgesia use during labor (OR=0.53; 95% CI=0.44-0.64), decreased neonatal adaptation needs (OR=0.66; 95% CI=0.52-0.83), reduced episiotomy (OR=0.75; 95% CI=0.60-0.94), and lowered perineal/vaginal tears (OR=1.28; 95% CI=1.05-1.56). No significant differences were found in cesarean rates, labor induction, perinatal mortality, preterm birth, or low birth weight.\n\n3. A systematic review including 11 RCTs with 12,276 women compared care by specialized midwives (groups of 2-3 midwives managing up to 35-40 normal pregnancies per year with obstetrician support at key gestational weeks) versus care by general practitioners, nurses, and obstetricians.\n\n4. Women cared for by specialized midwives had lower hospitalization rates (RR=0.90; 95% CI=0.81-0.99), less epidural analgesia (RR=0.81; 95% CI=0.73-0.91), fewer episiotomies (RR=0.82; 95% CI=0.77-0.88), and fewer instrumental deliveries (RR=0.86; 95% CI=0.78-0.96). They also had higher vaginal delivery rates (RR=1.04; 95% CI=1.02-1.06), greater self-control during labor (RR=1.74; 95% CI=1.32-2.30), more deliveries attended by a known midwife (RR=7.84; 95% CI=4.15-14.81), and higher breastfeeding initiation (RR=1.35; 95% CI=1.03-1.76).\n\n5. Additionally, women attended by midwives had fewer fetal losses before 24 weeks gestation (RR=0.79; 95% CI=0.65-0.97) and their neonates required shorter hospital stays (mean difference = -2.00 days; 95% CI= -2.15 to -1.85). No significant differences were found in overall fetal loss, neonatal mortality (RR=0.83; 95% CI=0.70-1.00), or fetal/neonatal death at 24 weeks (RR=1.01; 95% CI=0.67-1.53)."
+          }
+        ]
+      ]
+    },
+    {
+      "id": "0003",
+      "title": "RECOMENDACIONES CLÍNICAS",
+      "metadata": [
+        "pi-cmmgryj7003jl6eqnosd8pu3c",
+        "guia_embarazo_parto_clean.pdf",
+        "",
+        "This document provides comprehensive clinical guidelines and recommendations for prenatal care, management of pregnancy complications, labor, delivery, and postpartum care, based on current evidence and expert consensus.",
+        "File",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "relevant_contents": [
+        [
+          {
+            "section_title": "RECOMENDACIONES CLÍNICAS",
+            "physical_index": "<physical_index_5>",
+            "relevant_content": "1. It is recommended to offer women with a normal pregnancy prenatal care models led by general medicine or nursing professionals trained or specialized in maternal-perinatal care (Grade A).\n2. Routine participation of gynecologists-obstetricians (GO) in the care of women with a normal pregnancy is not recommended to improve perinatal outcomes; however, GO evaluation is recommended at weeks 28-30 and 34-36 for risk reassessment (Grade A).\n3. Prenatal care should be provided by a small group of professionals with whom the pregnant woman feels comfortable, ensuring continuity of care during the prenatal period (Grade A).\n4. A clear referral system is recommended so that pregnant women requiring additional care are attended by gynecologists-obstetricians when risks are identified during prenatal control (Grade ✓)."
+          }
+        ]
+      ]
+    },
+    {
+      "id": "0208",
+      "title": "SECCIÓN 2. ABORDAJE DE LAS COMPLICACIONES HIPERTENSIVAS ASOCIADAS AL EMBARAZO.",
+      "metadata": [
+        "pi-cmmgryj7003jl6eqnosd8pu3c",
+        "guia_embarazo_parto_clean.pdf",
+        "",
+        "This document provides comprehensive clinical guidelines and recommendations for prenatal care, management of pregnancy complications, labor, delivery, and postpartum care, based on current evidence and expert consensus.",
+        "File",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "relevant_contents": [
+        [
+          {
+            "section_title": "SECCIÓN 2. ABORDAJE DE LAS COMPLICACIONES HIPERTENSIVAS ASOCIADAS AL EMBARAZO.",
+            "physical_index": "<physical_index_146>",
+            "relevant_content": "1. Hipertensión en el embarazo se define como presión diastólica ≥90 mmHg en dos ocasiones con 4 horas de diferencia, o presión sistólica ≥140 mmHg y diastólica ≥110 mmHg en las mismas condiciones.\n2. Trastornos hipertensivos del embarazo incluyen hipertensión crónica (antes de la semana 20 o preexistente), hipertensión gestacional (nueva después de la semana 20 sin proteinuria significativa), preeclampsia (nueva después de la semana 20 con proteinuria significativa), preeclampsia severa (con hipertensión severa y/o compromiso de órgano blanco), eclampsia (convulsiones en preeclampsia sin otra causa), síndrome HELLP (hemólisis, enzimas hepáticas elevadas y plaquetas bajas), e hipertensión severa (presión arterial ≥160/110 mmHg).\n3. La preeclampsia se caracteriza por hipertensión nueva después de la semana 20 con proteinuria significativa, y la preeclampsia severa incluye síntomas de compromiso de órgano blanco.\n4. El síndrome HELLP es una complicación clínica grave que combina hemólisis, elevación de enzimas hepáticas y trombocitopenia.\n5. La guía incluye preguntas clave para abordar factores de riesgo, intervenciones preventivas, diagnóstico, seguimiento, manejo clínico, y monitoreo fetal en trastornos hipertensivos del embarazo."
+          }
+        ],
+        [
+          {
+            "section_title": "SECCIÓN 2. ABORDAJE DE LAS COMPLICACIONES HIPERTENSIVAS ASOCIADAS AL EMBARAZO.",
+            "physical_index": "<physical_index_148>",
+            "relevant_content": "1. The guideline development group (GDG) conducted a systematic literature review to support the definitions used for hypertensive complications in pregnancy.\n2. These definitions are endorsed by numerous international scientific groups and the International Society for the Study of Hypertension in Pregnancy (ISSHP).\n3. Significant proteinuria is used as a necessary diagnostic criterion for preeclampsia in this guideline.\n4. Preeclampsia is recognized as a multisystemic syndrome with wide variability in clinical and biochemical manifestations.\n5. It is common to find preeclampsia cases even in the absence of significant proteinuria."
+          }
+        ]
+      ]
+    },
+    {
+      "id": "0407",
+      "title": "RECOMENDACIONES PARA LA IMPLEMENTACIÓN DE LA GUÍA DE PRÁCTICA CLÍNICA PARA LA DETECCIÓN TEMPRANA, DIAGNÓSTICO, ATENCIÓN INTEGRAL Y SEGUIMIENTO DEL EMBARAZO, PARTO Y PUERPERIO.",
+      "metadata": [
+        "pi-cmmgryj7003jl6eqnosd8pu3c",
+        "guia_embarazo_parto_clean.pdf",
+        "",
+        "This document provides comprehensive clinical guidelines and recommendations for prenatal care, management of pregnancy complications, labor, delivery, and postpartum care, based on current evidence and expert consensus.",
+        "File",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "relevant_contents": [
+        [
+          {
+            "section_title": "RECOMENDACIONES PARA LA IMPLEMENTACIÓN DE LA GUÍA DE PRÁCTICA CLÍNICA PARA LA DETECCIÓN TEMPRANA, DIAGNÓSTICO, ATENCIÓN INTEGRAL Y SEGUIMIENTO DEL EMBARAZO, PARTO Y PUERPERIO.",
+            "physical_index": "<physical_index_401>",
+            "relevant_content": "1. Clinical Practice Guidelines (GPC) are central to the Mandatory Quality Assurance System in Health, aiming to maintain and improve health service quality nationwide.\n2. The implementation plan is national in scope, expecting all governmental and non-governmental institutions at national, departmental, and municipal levels to adopt the GPC within three years from official promulgation by the Ministry of Health and Social Protection.\n3. To facilitate implementation, it is important to review existing national and international health regulations to identify and harmonize any normative barriers that could conflict with the GPC recommendations.\n4. A comprehensive search was conducted across websites of WHO, PAHO, UNICEF, UNIFEM, the Ministry of Health and Social Protection, National Planning Department, and Health Superintendence, as well as specific national regulations related to pregnancy, childbirth, and puerperium.\n5. The review found a favorable opportunity for implementing and adopting the GPC nationally, supported by the emphasis on quality in health service delivery and previous regulatory frameworks such as Resolution 412 of 2000."
+          }
+        ]
+      ]
+    }
+  ]
+}
