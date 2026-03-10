@@ -1,6 +1,6 @@
 <div align="center">
-  <h1> 🚀 RAG Benchmark System</h1>
-  <img src="public/4-rags.png" width="900" alt="RAG Architectures Overview" />
+  <h1> Obstetric RAG Research</h1>
+  <img src="public/banner.png" width="900" alt="RAG Architectures Overview" />
   <br><br>
   <span style="zoom:1.3;">
     <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License: MIT" /></a>
@@ -14,30 +14,36 @@
   </span>
 </div>
 
-A comprehensive benchmarking framework for evaluating Retrieval-Augmented Generation (RAG) systems using RAGAS metrics. This project implements and compares multiple RAG architectures including Simple Semantic RAG, Hybrid RAG (BM25 + Semantic), HyDE RAG, and Query Rewriter RAG.
+A comprehensive research project comparing different Retrieval-Augmented Generation (RAG) techniques applied to medical question-answering in obstetrics. This work benchmarks multiple RAG architectures (Simple Semantic, Hybrid, HyDE, and Query Rewriter) across various Large Language Models (LLMs) and Small Specialized Language Models (SLMs) using RAGAS evaluation metrics.
 
 ---
 
-*Evaluate and compare multiple RAG architectures with comprehensive RAGAS metrics*
+*A comparative study of RAG techniques for obstetric medical Q&A: evaluation of retrieval strategies and large language model performance*
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Quick Start](#quick-start)
 - [Project Structure](#project-structure)
-- [RAG Architectures](#rag-architectures)
-- [Evaluation Metrics](#evaluation-metrics)
-- [Usage](#usage)
-- [Results and Analysis](#results-and-analysis)
-- [Configuration](#configuration)
-- [Customization](#customization)
-- [Contributing](#contributing)
+- [RAG Architectures Compared](#rag-architectures-compared)
+- [Evaluation Framework](#evaluation-framework)
+- [Experimental Protocol](#experimental-protocol)
+- [Results Storage and Analysis](#results-storage-and-analysis)
+- [Research Configuration](#research-configuration)
+- [Extending the Research](#extending-the-research)
+- [Contributing to the Research](#contributing-to-the-research)
 - [License](#license)
 
 
 ## Overview
 
-RAG Benchmark System is a professional-grade benchmarking framework designed to evaluate and compare Retrieval-Augmented Generation (RAG) systems using industry-standard RAGAS metrics. Este proyecto implementa cuatro arquitecturas RAG distintas y provee herramientas de evaluación completas.
+This research project investigates the effectiveness of different Retrieval-Augmented Generation (RAG) strategies for medical question-answering in the obstetrics domain. We implement and evaluate four distinct RAG architectures using a corpus of pregnancy and childbirth medical guidance, comparing their performance across multiple state-of-the-art language models using the RAGAS evaluation framework.
+
+**Research Focus:**
+- Comparative analysis of RAG retrieval strategies (semantic, hybrid, hypothetical embeddings, query reformulation)
+- Performance evaluation across multiple LLMs and specialized medical language models
+- Assessment of retrieval quality metrics (precision, recall, faithfulness)
+- Identification of optimal RAG configurations for medical Q&A scenarios
 
 ```mermaid
 sequenceDiagram
@@ -58,12 +64,12 @@ sequenceDiagram
   RAGAS-->>User: Return Evaluation Scores
 ```
 
-### Key Capabilities
+### Research Contributions
 
-- **Comprehensive Evaluation**: RAGAS metric-based evaluation with multiple GPT model support
-- **Multiple Architectures**: Simple Semantic RAG, Hybrid RAG (BM25 + Semantic), HyDE RAG, Query Rewriter RAG
-- **Complete Pipeline**: Data processing, embedding creation, vector storage, and automated evaluation
-- **Advanced Analysis**: Performance comparison, model benchmarking, and JSON result exports
+- **Systematic Evaluation**: RAGAS-based assessment of RAG architectures in medical domain
+- **Multiple Architectures**: Comparison of Simple Semantic, Hybrid (BM25 + Semantic), HyDE, and Query Rewriter approaches
+- **Model Diversity**: Evaluation across general-purpose LLMs and domain-specialized medical language models
+- **Reproducible Benchmark**: Complete pipeline from data processing to evaluation with detailed results documentation
 
 ## Quick Start
 
@@ -128,53 +134,57 @@ RAG-Benchmark/
 └── README.md                    # This file
 ```
 
-## RAG Architectures
+## RAG Architectures Compared
 
-This project implements four distinct RAG architectures:
+This research compares four distinct RAG retrieval strategies, each representing different approaches to the retrieval problem in knowledge-augmented question-answering:
 
 ### 1. Simple Semantic RAG
-- Uses semantic similarity search
-- Direct retrieval from vector database
-- Fast and straightforward approach
-- Best for: Simple, direct queries
+- **Strategy**: Direct vector similarity matching
+- **Hypothesis**: Dense embeddings alone provide sufficient retrieval quality
+- **Characteristics**: Single-stage retrieval, computationally efficient
+- **Use case in study**: Baseline for comparison
 
 ### 2. Hybrid RAG (BM25 + Semantic)
-- Combines BM25 keyword search with semantic search
-- Better retrieval accuracy for diverse queries
-- Balances precision and recall
-- Best for: Mixed keyword and semantic queries
+- **Strategy**: Ensemble of dense (semantic) and sparse (lexical) retrieval
+- **Hypothesis**: Combining different retrieval signals improves coverage
+- **Characteristics**: BM25 for keyword matching combined with semantic similarity
+- **Use case in study**: Evaluating hybrid retrieval benefits
 
 ### 3. HyDE RAG (Hypothetical Document Embeddings)
-- Generates hypothetical documents for queries
-- Uses embeddings of hypothetical content for retrieval
-- Effective for complex or abstract queries
-- Best for: Abstract or conceptual questions
+- **Strategy**: Query expansion through hypothetical document generation
+- **Hypothesis**: Generated relevant contexts improve embedding-based retrieval
+- **Characteristics**: LLM-generated hypothetical answers used as retrieval queries
+- **Use case in study**: Testing query-time expansion effectiveness
 
 ### 4. Query Rewriter RAG
-- Rewrites queries in multiple ways
-- Performs multiple retrievals with different formulations
-- Improves results for ambiguous queries
-- Best for: Ambiguous or multi-faceted questions
+- **Strategy**: Multi-formulation retrieval through query reformulation
+- **Hypothesis**: Different query reformulations retrieve complementary contexts
+- **Characteristics**: Generates multiple query variants for parallel retrieval
+- **Use case in study**: Evaluating diversity through multi-modal reformulation
 
-## Evaluation Metrics
+## Evaluation Framework
 
-The system uses RAGAS (Retrieval-Augmented Generation Assessment) for comprehensive evaluation:
+We employ RAGAS (Retrieval-Augmented Generation Assessment) as our primary evaluation framework. RAGAS provides automated, LLM-based metrics that assess both retrieval quality and generation quality without requiring manual annotations:
 
-Metrics Evaluated:
-- Faithfulness: How well the response matches the retrieved context
-- Answer Relevancy: How relevant the answer is to the question
-- Context Precision: Precision of retrieved context
-- Context Recall: Recall of retrieved context
+**Metrics Evaluated:**
+- **Faithfulness**: Measures how much of the generated answer is grounded in the retrieved context (reduces hallucination)
+- **Answer Relevancy**: Assesses whether the generated answer directly addresses the input question
+- **Context Precision**: Evaluates the proportion of retrieved context that is relevant to the question
+- **Context Recall**: Measures the completeness of retrieved relevant information from the knowledge base
 
-## Usage
+These metrics enable comprehensive comparison across RAG architectures and models to identify which combinations produce the highest quality medical Q&A responses.
 
-### Individual RAG Evaluation
+## Experimental Protocol
+
+### Individual RAG Architecture Evaluation
+
+Evaluate a single RAG architecture with a default LLM:
 
 ```bash
 # Simple Semantic RAG
 python scripts/run_evaluation.py simple
 
-# Hybrid RAG
+# Hybrid RAG (BM25 + Semantic)
 python scripts/run_evaluation.py hybrid
 
 # HyDE RAG
@@ -186,25 +196,29 @@ python scripts/run_evaluation.py rewriter
 
 ### Multi-Model Evaluation
 
+Compare performance across multiple language models for a specific RAG architecture:
+
 ```bash
-# Evaluate Hybrid RAG with all models
+# Evaluate all models with Hybrid RAG
 python scripts/run_evaluation.py multi-model hybrid
 
-# Evaluate Simple RAG with all models
+# Evaluate all models with Simple RAG
 python scripts/run_evaluation.py multi-model simple
 ```
 
-### Comprehensive Evaluation
+### Comprehensive Benchmark
+
+Run complete evaluation across all RAG architectures and all available models:
 
 ```bash
 python scripts/run_evaluation.py all-models-all-rags
 ```
 
-This command will:
-- Test all 4 RAG architectures
-- Use all 4 GPT models (gpt-3.5-turbo, gpt-4o, gpt-4o-mini, gpt-4)
-- Generate 16 evaluation runs
-- Create a consolidated JSON file with all results
+This produces complete comparison data showing:
+- Performance of each RAG architecture
+- Model-specific performance variations
+- Cross-model consistency
+- Optimal configuration identification
 
 ### Other Commands
 
@@ -222,16 +236,23 @@ python scripts/view_embeddings.py
 python scripts/test_retrieval.py
 ```
 
-## Results and Analysis
+## Results Storage and Analysis
 
-### Output Files
-Results are saved in the `results/` directory as JSON files:
-- `ragas_evaluation_[type]_[timestamp].json` - Individual evaluations
-- `ragas_comprehensive_all_rags_all_models_[timestamp].json` - Complete evaluation
+### Output Format
+Evaluation results are saved as JSON files in the `results/` directory:
+- `ragas_evaluation_[rag_type]_[timestamp].json` — Individual RAG architecture evaluation
+- `ragas_comprehensive_all_rags_all_models_[timestamp].json` — Complete comparative benchmark
+
+### Analysis Capabilities
+Results can be analyzed to:
+- Identify the most effective RAG architecture for medical Q&A
+- Determine model-specific performance variations
+- Assess retrieval quality across different strategies
+- Generate comparative visualizations and statistical analysis
 
 ### JSON Output Structure
 
-#### Individual RAG Evaluation
+#### Individual Evaluation Results
 ```json
 {
   "metadata": {
@@ -251,63 +272,84 @@ Results are saved in the `results/` directory as JSON files:
 }
 ```
 
-## Configuration
+## Research Configuration
 
-### Environment Variables
-- `OPENAI_API_KEY`: Your OpenAI API key (required)
+### Environment Setup
+- `OPENAI_API_KEY`: OpenAI API key for LLM and embedding model access (required)
 
-### Supported Models
-- gpt-3.5-turbo
-- gpt-4o
-- gpt-4o-mini
-- gpt-4
+### Language Models Evaluated
+- **General-Purpose LLMs**: gpt-3.5-turbo, gpt-4o, gpt-4o-mini, gpt-4
+- **Specialized Models**: (To be integrated) Medical-specialized language models for domain comparison
 
-## Customization
+### Retrieval Configuration
+- **Vector Database**: ChromaDB with persistent storage
+- **Embedding Model**: OpenAI text-embedding-3-small
+- **Default Retrieval**: k=5 chunks per query
+- **Collection**: guia_embarazo_parto (obstetrics medical guidance)
 
-### Adding New Documents
-1. Place documents in `data/raw/`
-2. Process them into chunks
-3. Update `data/chunks/chunks_final.json`
-4. Re-run embedding creation
+## Extending the Research
 
-### Modifying RAG Parameters
-Edit the respective RAG files:
-- `src/rag/simple.py`
-- `src/rag/hybrid.py`
-- `src/rag/hyde.py`
-- `src/rag/rewriter.py`
+### Adding New RAG Architectures
+To evaluate a novel RAG strategy:
+1. Implement the strategy in `src/rag/[new_rag_name].py`
+2. Define the required `query_for_evaluation()` function compatible with the evaluation pipeline
+3. Wire into `src/evaluation/ragas_evaluator.py`
+4. Run comprehensive evaluations to compare against existing architectures
 
-### Custom Evaluation Metrics
-Modify `src/evaluation/ragas_evaluator.py` to add custom metrics or evaluation logic.
+### Integrating Domain-Specialized Models
+To evaluate medical-specialized language models:
+1. Add model configuration to `src/common/model_provider.py`
+2. Ensure model API compatibility with evaluation framework
+3. Run multi-model evaluation to assess domain expertise benefits
 
-## Contributing
+### Modifying Retrieval Parameters
+Experiment with different retrieval settings:
+- Edit `src/rag/*.py` files to adjust retrieval count (k), reranking, or filtering strategies
+- Document configuration changes in evaluation metadata
+- Run comparative evaluations to measure parameter impact
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+### Customizing Evaluation Metrics
+Extend `src/evaluation/ragas_evaluator.py` to:
+- Add domain-specific evaluation metrics
+- Implement human evaluation comparisons
+- Generate detailed analysis and visualization reports
+
+## Contributing to the Research
+
+We welcome contributions that advance this research on RAG techniques for medical Q&A:
+
+1. **New RAG Architectures**: Propose and implement novel retrieval strategies
+2. **Model Integration**: Add new language models (especially domain-specialized medical models)
+3. **Evaluation Extensions**: Propose additional metrics or analysis methods
+4. **Documentation**: Document findings, parameter studies, or experimental observations
+5. **Results & Analysis**: Contribute analysis, visualizations, or comparative insights
+
+To contribute:
+- Fork the repository
+- Create a feature branch with descriptive name
+- Document your changes and experimental methodology
+- Submit a pull request with results summary and analysis
 
 ## License
 
 This project is licensed under the MIT License. See `LICENSE` for details.
 
-## Support
-
-- **Issues**: Create an issue on GitHub
-- **Documentation**: This README and inline code comments
-- **Community**: Check existing issues and discussions
-
-## Example Usage
+## Quick Reference
 
 ```python
-# Example: Evaluate Hybrid RAG
+# Example: Evaluate an individual question across RAG architectures
 from src.evaluation.ragas_evaluator import RAGASEvaluator
 
 evaluator = RAGASEvaluator()
-results = evaluator.evaluate_rag("hybrid", "gpt-4o")
-print(f"Faithfulness: {results['faithfulness']}")
-print(f"Answer Relevancy: {results['answer_relevancy']}")
+
+# Evaluate Hybrid RAG with gpt-4o
+hybrid_results = evaluator.evaluate_rag("hybrid", "gpt-4o")
+print(f"Hybrid Faithfulness: {hybrid_results['faithfulness']}")
+print(f"Hybrid Answer Relevancy: {hybrid_results['answer_relevancy']}")
+
+# Compare with Simple RAG
+simple_results = evaluator.evaluate_rag("simple", "gpt-4o")
+print(f"Simple Faithfulness: {simple_results['faithfulness']}")
 ```
 
-For more advanced usage, see the individual RAG implementation files and the evaluation script.
+For detailed information on each RAG implementation and evaluation procedures, see the individual module files and the evaluation script.

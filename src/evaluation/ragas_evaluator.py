@@ -29,6 +29,7 @@ from src.rag.rewriter import query_for_evaluation as rewriter_query_for_evaluati
 from src.rag.hybrid import query_for_evaluation as hybrid_query_for_evaluation
 from src.rag.hyde import query_for_evaluation as hyde_query_for_evaluation
 from src.rag.simple import query_for_evaluation as simple_query_for_evaluation
+from src.rag.pageindex import query_for_evaluation as pageindex_query_for_evaluation
 
 # Model provider imports
 from src.common.model_provider import ModelConfig, create_llm, MODELS_REGISTRY
@@ -119,8 +120,13 @@ class RAGASEvaluator:
             self.rag_name = "Simple Semantic RAG"
             self.rag_type = "simple"
             self.llm_model = "gpt-4o"  # Default model for simple RAG
+        elif rag_type.lower() == "pageindex":
+            self.query_function = pageindex_query_for_evaluation
+            self.rag_name = "PageIndex RAG"
+            self.rag_type = "pageindex"
+            self.llm_model = "gpt-4o"  # Default model for pageindex RAG
         else:
-            raise ValueError(f"Unsupported RAG type: {rag_type}. Use 'rewriter', 'hybrid', 'hyde', or 'simple'")
+            raise ValueError(f"Unsupported RAG type: {rag_type}. Use 'rewriter', 'hybrid', 'hyde', 'simple', or 'pageindex'")
         
         print(f"RAGAS Evaluator configured for: {self.rag_name}")
         
@@ -510,6 +516,8 @@ class RAGASEvaluator:
                         return hyde_query_for_evaluation(question, custom_hyde_llm=llm_instance, custom_answer_llm=llm_instance)
                     elif self.rag_type == "rewriter":
                         return rewriter_query_for_evaluation(question, custom_rewriter_llm=llm_instance, custom_answer_llm=llm_instance)
+                    elif self.rag_type == "pageindex":
+                        return pageindex_query_for_evaluation(question, custom_llm=llm_instance)
                     else:
                         return self.query_function(question)
                 
@@ -706,6 +714,28 @@ def evaluate_simple_rag(export_analysis: bool = False, debug: bool = False):
     return results
 
 
+def evaluate_pageindex_rag(export_analysis: bool = False, debug: bool = False):
+    """Evaluate PageIndex RAG specifically"""
+    evaluator = RAGASEvaluator(rag_type="pageindex", debug=debug)
+    results = evaluator.run_evaluation()
+    
+    if export_analysis:
+        try:
+            from src.common.utils import export_ragas_analysis
+            
+            performance_metadata = getattr(evaluator, 'performance_metadata', None)
+            export_files = export_ragas_analysis(results, "pageindex_rag", performance_metadata=performance_metadata)
+            print("\nDetailed analysis exported:")
+            for file_type, file_path in export_files.items():
+                print(f"  {file_type}: {file_path.name}")
+        except Exception as e:
+            print(f"Error exporting analysis: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    return results
+
+
 def evaluate_both_rags(export_analysis: bool = False, debug: bool = False):
     """Evaluate both original RAG systems sequentially (rewriter and hybrid)"""
     print("Evaluating both original RAG systems")
@@ -739,8 +769,8 @@ def evaluate_both_rags(export_analysis: bool = False, debug: bool = False):
 
 
 def evaluate_all_rags(export_analysis: bool = False, debug: bool = False):
-    """Evaluate all 4 RAG systems sequentially"""
-    print("Evaluating all 4 RAG systems")
+    """Evaluate all 5 RAG systems sequentially"""
+    print("Evaluating all 5 RAG systems")
     print("="*80)
     
     results = {}
@@ -775,7 +805,15 @@ def evaluate_all_rags(export_analysis: bool = False, debug: bool = False):
     results["hybrid"] = evaluate_hybrid_rag(export_analysis=export_analysis, debug=debug)
     
     print("\n" + "="*80)
-    print("Complete evaluation of all 4 RAG systems finished")
+    print("Pause between evaluations...")
+    time.sleep(2)
+    
+    # Evaluate PageIndex RAG
+    print("\n" + "="*28 + " PAGEINDEX RAG " + "="*28)
+    results["pageindex"] = evaluate_pageindex_rag(export_analysis=export_analysis, debug=debug)
+    
+    print("\n" + "="*80)
+    print("Complete evaluation of all 5 RAG systems finished")
     if export_analysis:
         print("Detailed analysis exported for all systems")
     else:
@@ -961,7 +999,8 @@ def get_rag_name(rag_type: str) -> str:
         "simple": "Simple Semantic RAG",
         "hyde": "HyDE RAG (Hypothetical Documents)",
         "rewriter": "Rewriter RAG (Multi-Query)",
-        "hybrid": "Hybrid RAG (BM25 + Semantic)"
+        "hybrid": "Hybrid RAG (BM25 + Semantic)",
+        "pageindex": "PageIndex RAG"
     }
     return names.get(rag_type, rag_type)
 
@@ -979,14 +1018,16 @@ def main():
     
     if len(args) > 0:
         rag_type = args[0].lower()
-        if rag_type == "rewriter":
-            return evaluate_rewriter_rag(export_analysis=export_analysis, debug=debug)
+        if rag_type == "simple":
+            return evaluate_simple_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "hybrid":
             return evaluate_hybrid_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "hyde":
             return evaluate_hyde_rag(export_analysis=export_analysis, debug=debug)
-        elif rag_type == "simple":
-            return evaluate_simple_rag(export_analysis=export_analysis, debug=debug)
+        elif rag_type == "rewriter":
+            return evaluate_rewriter_rag(export_analysis=export_analysis, debug=debug)
+        elif rag_type == "pageindex":
+            return evaluate_pageindex_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "both":
             return evaluate_both_rags(export_analysis=export_analysis, debug=debug)
         elif rag_type == "all":
@@ -998,34 +1039,36 @@ def main():
         elif rag_type == "all-models-all-rags":
             return run_all_models_all_rags_evaluation(export_analysis=export_analysis, debug=debug)
         else:
-            print("Invalid RAG type. Use: 'rewriter', 'hybrid', 'hyde', 'simple', 'both', 'all', or 'multi-model [rag_type]'")
+            print("Invalid RAG type. Use: 'rewriter', 'hybrid', 'hyde', 'simple', 'pageindex', 'both', 'all', or 'multi-model [rag_type]'")
             return
     
     # Default: show usage
     print("RAGAS Evaluator - Professional RAG Evaluation")
     print("Available RAG types:")
-    print("  - rewriter: Multi-Query Rewriter RAG")
+    print("  - simple: Simple Semantic RAG")
     print("  - hybrid: Hybrid RAG (BM25 + Semantic)")
     print("  - hyde: HyDE RAG (Hypothetical Documents)")
-    print("  - simple: Simple Semantic RAG")
+    print("  - rewriter: Multi-Query Rewriter RAG")
+    print("  - pageindex: PageIndex RAG")
     print("  - both: Evaluate original two RAGs (rewriter + hybrid)")
-    print("  - all: Evaluate all 4 RAG systems")
+    print("  - all: Evaluate all 5 RAG systems")
     print("  - multi-model [rag_type]: Evaluate a specific RAG with multiple models")
     print("  - all-models-all-rags: Evaluate ALL RAGs with ALL models (comprehensive)")
     print("\nUsage: python ragas_evaluator.py [type] [--export] [--debug]")
     print("Examples:")
     print("  python ragas_evaluator.py simple")
     print("  python ragas_evaluator.py all --export")
+    print("  python ragas_evaluator.py pageindex")
     print("  python ragas_evaluator.py multi-model simple")
     print("  python ragas_evaluator.py all-models-all-rags")
-    return evaluate_rewriter_rag(export_analysis=export_analysis, debug=debug)
+    return evaluate_simple_rag(export_analysis=export_analysis, debug=debug)
 
 
 def run_all_models_all_rags_evaluation(export_analysis: bool = False, debug: bool = False):
     """
     Evaluate ALL RAG types against ALL LLM models and save a consolidated JSON report.
     """
-    rag_types = ["simple", "hybrid", "hyde", "rewriter"]
+    rag_types = ["simple", "hybrid", "hyde", "rewriter", "pageindex"]
     models_to_test = list(MODELS_REGISTRY.keys())
 
     print("🚀 Starting comprehensive evaluation: ALL RAGs vs ALL Models")
@@ -1070,6 +1113,8 @@ def run_all_models_all_rags_evaluation(export_analysis: bool = False, debug: boo
                         return hyde_query_for_evaluation(question, custom_hyde_llm=llm_instance, custom_answer_llm=llm_instance)
                     elif rag_type == "rewriter":
                         return rewriter_query_for_evaluation(question, custom_rewriter_llm=llm_instance, custom_answer_llm=llm_instance)
+                    elif rag_type == "pageindex":
+                        return pageindex_query_for_evaluation(question, custom_llm=llm_instance)
                     else:
                         return original_query_function(question)
 
