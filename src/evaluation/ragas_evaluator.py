@@ -6,6 +6,8 @@ Professional evaluation using RAGAS fundamental metrics
 import os
 import json
 import sys
+import numpy as np
+import pandas as pd
 from pathlib import Path
 from typing import List, Dict, Any
 from datetime import datetime
@@ -17,7 +19,14 @@ sys.path.append(str(project_root))
 # RAGAS imports
 from datasets import Dataset
 from ragas import evaluate
+from ragas.run_config import RunConfig
+from ragas.dataset_schema import SingleTurnSample
+from ragas.embeddings.base import embedding_factory
+from ragas.llms import llm_factory
+from ragas.metrics._answer_correctness import AnswerCorrectness
+from ragas.metrics.base import MetricWithEmbeddings, MetricWithLLM
 from ragas.metrics import (
+    AspectCritic,
     faithfulness,
     answer_relevancy,
     context_precision,
@@ -27,6 +36,7 @@ from ragas.metrics import (
 # RAG systems imports
 from src.rag.rewriter import query_for_evaluation as rewriter_query_for_evaluation
 from src.rag.hybrid import query_for_evaluation as hybrid_query_for_evaluation
+from src.rag.hybrid_rrf import query_for_evaluation as hybrid_rrf_query_for_evaluation
 from src.rag.hyde import query_for_evaluation as hyde_query_for_evaluation
 from src.rag.simple import query_for_evaluation as simple_query_for_evaluation
 from src.rag.pageindex import query_for_evaluation as pageindex_query_for_evaluation
@@ -79,6 +89,20 @@ DATA_GT = [
 ]
 
 
+class SyncEvaluationResult:
+    """Lightweight result wrapper compatible with downstream to_pandas flow."""
+
+    def __init__(self, dataframe: pd.DataFrame, metrics: List[Any]):
+        self._df = dataframe
+        for metric in metrics:
+            metric_name = metric.name
+            mean_val = float(np.nanmean(dataframe[metric_name])) if metric_name in dataframe.columns else float("nan")
+            setattr(self, metric_name, mean_val)
+
+    def to_pandas(self) -> pd.DataFrame:
+        return self._df
+
+
 class RAGASEvaluator:
     """Professional RAGAS evaluator for RAG systems"""
     
@@ -105,6 +129,11 @@ class RAGASEvaluator:
             self.rag_name = "Hybrid RAG (BM25 + Semantic)"
             self.rag_type = "hybrid"
             self.llm_model = "gpt-4o"  # Default model for hybrid RAG
+        elif rag_type.lower() == "hybrid-rrf":
+            self.query_function = hybrid_rrf_query_for_evaluation
+            self.rag_name = "Hybrid RAG + RRF (BM25 + Semantic)"
+            self.rag_type = "hybrid-rrf"
+            self.llm_model = "gpt-4o"  # Default model for hybrid RRF RAG
         elif rag_type.lower() == "rewriter":
             self.query_function = rewriter_query_for_evaluation
             self.rag_name = "Rewriter RAG (Multi-Query)"
@@ -126,7 +155,7 @@ class RAGASEvaluator:
             self.rag_type = "pageindex"
             self.llm_model = "gpt-4o"  # Default model for pageindex RAG
         else:
-            raise ValueError(f"Unsupported RAG type: {rag_type}. Use 'rewriter', 'hybrid', 'hyde', 'simple', or 'pageindex'")
+            raise ValueError(f"Unsupported RAG type: {rag_type}. Use 'rewriter', 'hybrid', 'hybrid-rrf', 'hyde', 'simple', or 'pageindex'")
         
         print(f"RAGAS Evaluator configured for: {self.rag_name}")
         
@@ -232,11 +261,29 @@ class RAGASEvaluator:
         self.original_dataset = dataset
         
         try:
+            # Python 3.14 + some async stacks can fail when timeout wrappers are
+            # applied outside of expected task contexts. Disable per-call timeout
+            # here to keep RAGAS metric jobs stable.
+            run_config = RunConfig(timeout=None, max_workers=8)
+
             # Execute evaluation
             results = evaluate(
                 dataset=dataset,
                 metrics=self.metrics,
+                run_config=run_config,
             )
+
+            # RAGAS can complete with silent per-job failures and return all-NaN
+            # metrics (seen on Python 3.14 async timeout context issues).
+            # Detect that case and switch to synchronous fallback.
+            if hasattr(results, "to_pandas"):
+                results_df = results.to_pandas()
+                metric_columns = [m.name for m in self.metrics if m.name in results_df.columns]
+                if metric_columns:
+                    all_nan = all(results_df[col].isna().all() for col in metric_columns)
+                    if all_nan:
+                        print("Detected all-NaN async metric output. Switching to synchronous fallback...")
+                        return self._evaluate_rag_sync_fallback(dataset)
             
             print("Evaluation completed")
             return results
@@ -246,7 +293,90 @@ class RAGASEvaluator:
             if self.debug:
                 import traceback
                 traceback.print_exc()
+            print("Falling back to synchronous metric evaluation mode...")
+            return self._evaluate_rag_sync_fallback(dataset)
+
+    def _evaluate_rag_sync_fallback(self, dataset: Dataset):
+        """
+        Synchronous fallback for environments where async metric jobs fail.
+
+        This path preserves metric names and downstream result structure compatibility.
+        """
+        run_config = RunConfig(timeout=None, max_workers=1)
+
+        llm_instance = None
+        embedding_instance = None
+        llm_changed: List[int] = []
+        embeddings_changed: List[int] = []
+        _answer_correctness_is_set = -1
+
+        try:
+            # Mirror ragas.evaluate initialization logic.
+            for i, metric in enumerate(self.metrics):
+                if isinstance(metric, AspectCritic):
+                    pass
+
+                if isinstance(metric, MetricWithLLM) and metric.llm is None:
+                    if llm_instance is None:
+                        llm_instance = llm_factory()
+                    metric.llm = llm_instance
+                    llm_changed.append(i)
+
+                if isinstance(metric, MetricWithEmbeddings) and metric.embeddings is None:
+                    if embedding_instance is None:
+                        embedding_instance = embedding_factory()
+                    metric.embeddings = embedding_instance
+                    embeddings_changed.append(i)
+
+                if isinstance(metric, AnswerCorrectness) and metric.answer_similarity is None:
+                    _answer_correctness_is_set = i
+
+                metric.init(run_config)
+
+            rows = dataset.to_list()
+            score_rows: List[Dict[str, Any]] = []
+
+            for row in rows:
+                sample = SingleTurnSample(
+                    user_input=row.get("question"),
+                    response=row.get("answer"),
+                    retrieved_contexts=row.get("contexts"),
+                    reference=row.get("ground_truth"),
+                )
+
+                row_scores: Dict[str, Any] = {}
+                for metric in self.metrics:
+                    metric_name = metric.name
+                    try:
+                        row_scores[metric_name] = float(metric.single_turn_score(sample))
+                    except Exception as metric_error:
+                        if self.debug:
+                            print(f"Metric '{metric_name}' failed in sync fallback: {metric_error}")
+                        row_scores[metric_name] = np.nan
+
+                score_rows.append(row_scores)
+
+            results_df = pd.DataFrame(score_rows)
+            print("Evaluation completed (synchronous fallback mode)")
+            return SyncEvaluationResult(results_df, self.metrics)
+
+        except Exception as e:
+            print(f"Synchronous fallback failed: {e}")
+            if self.debug:
+                import traceback
+                traceback.print_exc()
             return None
+
+        finally:
+            # Restore metric state like ragas.evaluate does.
+            for i in llm_changed:
+                metric = self.metrics[i]
+                if isinstance(metric, MetricWithLLM):
+                    metric.llm = None
+            for i in embeddings_changed:
+                metric = self.metrics[i]
+                if isinstance(metric, MetricWithEmbeddings):
+                    metric.embeddings = None
     
     def display_results(self, results):
         """Display evaluation results in a clean format"""
@@ -512,6 +642,8 @@ class RAGASEvaluator:
                         return simple_query_for_evaluation(question, custom_llm=llm_instance)
                     elif self.rag_type == "hybrid":
                         return hybrid_query_for_evaluation(question, custom_llm=llm_instance)
+                    elif self.rag_type == "hybrid-rrf":
+                        return hybrid_rrf_query_for_evaluation(question, custom_llm=llm_instance)
                     elif self.rag_type == "hyde":
                         return hyde_query_for_evaluation(question, custom_hyde_llm=llm_instance, custom_answer_llm=llm_instance)
                     elif self.rag_type == "rewriter":
@@ -670,6 +802,28 @@ def evaluate_hybrid_rag(export_analysis: bool = False, debug: bool = False):
     return results
 
 
+def evaluate_hybrid_rrf_rag(export_analysis: bool = False, debug: bool = False):
+    """Evaluate Hybrid RAG + RRF specifically"""
+    evaluator = RAGASEvaluator(rag_type="hybrid-rrf", debug=debug)
+    results = evaluator.run_evaluation()
+
+    if export_analysis:
+        try:
+            from src.common.utils import export_ragas_analysis
+
+            performance_metadata = getattr(evaluator, 'performance_metadata', None)
+            export_files = export_ragas_analysis(results, "hybrid_rrf_rag", performance_metadata=performance_metadata)
+            print("\nDetailed analysis exported:")
+            for file_type, file_path in export_files.items():
+                print(f"  {file_type}: {file_path.name}")
+        except Exception as e:
+            print(f"Error exporting analysis: {e}")
+            import traceback
+            traceback.print_exc()
+
+    return results
+
+
 def evaluate_hyde_rag(export_analysis: bool = False, debug: bool = False):
     """Evaluate HyDE RAG specifically"""
     evaluator = RAGASEvaluator(rag_type="hyde", debug=debug)
@@ -769,8 +923,8 @@ def evaluate_both_rags(export_analysis: bool = False, debug: bool = False):
 
 
 def evaluate_all_rags(export_analysis: bool = False, debug: bool = False):
-    """Evaluate all 5 RAG systems sequentially"""
-    print("Evaluating all 5 RAG systems")
+    """Evaluate all 6 RAG systems sequentially"""
+    print("Evaluating all 6 RAG systems")
     print("="*80)
     
     results = {}
@@ -803,6 +957,14 @@ def evaluate_all_rags(export_analysis: bool = False, debug: bool = False):
     # Evaluate Hybrid RAG
     print("\n" + "="*28 + " HYBRID RAG " + "="*28)
     results["hybrid"] = evaluate_hybrid_rag(export_analysis=export_analysis, debug=debug)
+
+    print("\n" + "="*80)
+    print("Pause between evaluations...")
+    time.sleep(2)
+
+    # Evaluate Hybrid RAG + RRF
+    print("\n" + "="*25 + " HYBRID RAG + RRF " + "="*25)
+    results["hybrid-rrf"] = evaluate_hybrid_rrf_rag(export_analysis=export_analysis, debug=debug)
     
     print("\n" + "="*80)
     print("Pause between evaluations...")
@@ -813,7 +975,7 @@ def evaluate_all_rags(export_analysis: bool = False, debug: bool = False):
     results["pageindex"] = evaluate_pageindex_rag(export_analysis=export_analysis, debug=debug)
     
     print("\n" + "="*80)
-    print("Complete evaluation of all 5 RAG systems finished")
+    print("Complete evaluation of all 6 RAG systems finished")
     if export_analysis:
         print("Detailed analysis exported for all systems")
     else:
@@ -1000,6 +1162,7 @@ def get_rag_name(rag_type: str) -> str:
         "hyde": "HyDE RAG (Hypothetical Documents)",
         "rewriter": "Rewriter RAG (Multi-Query)",
         "hybrid": "Hybrid RAG (BM25 + Semantic)",
+        "hybrid-rrf": "Hybrid RAG + RRF (BM25 + Semantic)",
         "pageindex": "PageIndex RAG"
     }
     return names.get(rag_type, rag_type)
@@ -1022,6 +1185,8 @@ def main():
             return evaluate_simple_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "hybrid":
             return evaluate_hybrid_rag(export_analysis=export_analysis, debug=debug)
+        elif rag_type == "hybrid-rrf":
+            return evaluate_hybrid_rrf_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "hyde":
             return evaluate_hyde_rag(export_analysis=export_analysis, debug=debug)
         elif rag_type == "rewriter":
@@ -1039,7 +1204,7 @@ def main():
         elif rag_type == "all-models-all-rags":
             return run_all_models_all_rags_evaluation(export_analysis=export_analysis, debug=debug)
         else:
-            print("Invalid RAG type. Use: 'rewriter', 'hybrid', 'hyde', 'simple', 'pageindex', 'both', 'all', or 'multi-model [rag_type]'")
+            print("Invalid RAG type. Use: 'rewriter', 'hybrid', 'hybrid-rrf', 'hyde', 'simple', 'pageindex', 'both', 'all', or 'multi-model [rag_type]'")
             return
     
     # Default: show usage
@@ -1047,6 +1212,7 @@ def main():
     print("Available RAG types:")
     print("  - simple: Simple Semantic RAG")
     print("  - hybrid: Hybrid RAG (BM25 + Semantic)")
+    print("  - hybrid-rrf: Hybrid RAG + RRF (BM25 + Semantic)")
     print("  - hyde: HyDE RAG (Hypothetical Documents)")
     print("  - rewriter: Multi-Query Rewriter RAG")
     print("  - pageindex: PageIndex RAG")
@@ -1057,6 +1223,7 @@ def main():
     print("\nUsage: python ragas_evaluator.py [type] [--export] [--debug]")
     print("Examples:")
     print("  python ragas_evaluator.py simple")
+    print("  python ragas_evaluator.py hybrid-rrf")
     print("  python ragas_evaluator.py all --export")
     print("  python ragas_evaluator.py pageindex")
     print("  python ragas_evaluator.py multi-model simple")
@@ -1068,7 +1235,7 @@ def run_all_models_all_rags_evaluation(export_analysis: bool = False, debug: boo
     """
     Evaluate ALL RAG types against ALL LLM models and save a consolidated JSON report.
     """
-    rag_types = ["simple", "hybrid", "hyde", "rewriter", "pageindex"]
+    rag_types = ["simple", "hybrid", "hybrid-rrf", "hyde", "rewriter", "pageindex"]
     models_to_test = list(MODELS_REGISTRY.keys())
 
     print("🚀 Starting comprehensive evaluation: ALL RAGs vs ALL Models")
@@ -1109,6 +1276,8 @@ def run_all_models_all_rags_evaluation(export_analysis: bool = False, debug: boo
                         return simple_query_for_evaluation(question, custom_llm=llm_instance)
                     elif rag_type == "hybrid":
                         return hybrid_query_for_evaluation(question, custom_llm=llm_instance)
+                    elif rag_type == "hybrid-rrf":
+                        return hybrid_rrf_query_for_evaluation(question, custom_llm=llm_instance)
                     elif rag_type == "hyde":
                         return hyde_query_for_evaluation(question, custom_hyde_llm=llm_instance, custom_answer_llm=llm_instance)
                     elif rag_type == "rewriter":

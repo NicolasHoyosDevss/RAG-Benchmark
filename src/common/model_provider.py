@@ -13,6 +13,28 @@ from langchain_openai import ChatOpenAI
 from langchain_core.language_models import BaseChatModel
 
 
+def _normalize_openai_compatible_base_url(endpoint_url: str) -> str:
+    """
+    Normalize endpoint URL to an OpenAI-compatible base URL ending in /v1.
+
+    Accepts any of these input styles and normalizes them safely:
+    - https://host
+    - https://host/
+    - https://host/v1
+    - https://host/v1/
+    - https://host/v1/chat/completions
+    """
+    normalized = endpoint_url.strip().rstrip("/")
+
+    if normalized.endswith("/chat/completions"):
+        normalized = normalized[: -len("/chat/completions")]
+
+    if normalized.endswith("/v1"):
+        return normalized
+
+    return f"{normalized}/v1"
+
+
 def load_dotenv_if_needed():
     """Load .env if not already loaded."""
     try:
@@ -141,8 +163,10 @@ def create_llm(config: ModelConfig) -> BaseChatModel:
                 "Required for authentication with HuggingFace endpoints."
             )
         
+        base_url = _normalize_openai_compatible_base_url(endpoint_url)
+
         return ChatOpenAI(
-            base_url=f"{endpoint_url}/v1",
+            base_url=base_url,
             api_key=hf_token,
             model_name=config.model_id,
             temperature=config.temperature,
@@ -161,9 +185,9 @@ MODELS_REGISTRY: Dict[str, ModelConfig] = {
         provider="openai",
         temperature=0.0
     ),
-    "gpt-4.1": ModelConfig(
-        name="gpt-4.1",
-        model_id="gpt-4.1",
+    "gpt-5.2": ModelConfig(
+        name="gpt-5.2",
+        model_id="gpt-5.2",
         provider="openai",
         temperature=0.0
     ),
