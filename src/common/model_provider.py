@@ -56,6 +56,51 @@ class ModelConfig:
             )
 
 
+def get_model_identity(model_name: Optional[str] = None, llm: Optional[BaseChatModel] = None) -> Dict[str, str]:
+    """
+    Resolve provider/model identity from registry hints and runtime LLM instance.
+
+    This keeps metadata and pricing lookups consistent across OpenAI and
+    OpenAI-compatible providers like HuggingFace inference endpoints.
+    """
+    runtime_model_name = ""
+    if llm is not None:
+        runtime_model_name = str(getattr(llm, "model_name", "") or "").strip()
+
+    requested_name = str(model_name or "").strip()
+    candidates = [c for c in (requested_name, runtime_model_name) if c]
+
+    for candidate in candidates:
+        if candidate in MODELS_REGISTRY:
+            config = MODELS_REGISTRY[candidate]
+            return {
+                "provider": config.provider,
+                "model_id": config.model_id,
+                "model_name": config.name,
+            }
+
+    for config in MODELS_REGISTRY.values():
+        if runtime_model_name and runtime_model_name == config.model_id:
+            return {
+                "provider": config.provider,
+                "model_id": config.model_id,
+                "model_name": config.name,
+            }
+
+    inferred_provider = "unknown"
+    if runtime_model_name and "/" in runtime_model_name:
+        inferred_provider = "huggingface"
+    elif runtime_model_name:
+        inferred_provider = "openai"
+
+    final_model_id = runtime_model_name or requested_name or "unknown"
+    return {
+        "provider": inferred_provider,
+        "model_id": final_model_id,
+        "model_name": requested_name or runtime_model_name or "unknown",
+    }
+
+
 def create_llm(config: ModelConfig) -> BaseChatModel:
     """
     Factory function to create a language model based on configuration.
@@ -139,4 +184,10 @@ MODELS_REGISTRY: Dict[str, ModelConfig] = {
 }
 
 
-__all__ = ["ModelConfig", "create_llm", "MODELS_REGISTRY", "load_dotenv_if_needed"]
+__all__ = [
+    "ModelConfig",
+    "create_llm",
+    "get_model_identity",
+    "MODELS_REGISTRY",
+    "load_dotenv_if_needed",
+]

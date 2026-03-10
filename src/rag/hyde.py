@@ -11,15 +11,16 @@ accuracy by searching for a more detailed document rather than a short query.
 import os
 import time
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
-from langchain_community.callbacks import get_openai_callback
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.language_models import BaseChatModel
+
+from src.common.model_provider import get_model_identity
+from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
 
 # --- Environment and Path Configuration ---
 
@@ -111,17 +112,36 @@ def generate_hypothetical_document(query: str) -> Dict[str, Any]:
     Returns:
         Dict[str, Any]: A dictionary containing the generated document and token/cost metrics.
     """
-    with get_openai_callback() as cb:
-        response = (hyde_prompt | llm_hyde | StrOutputParser()
-                    ).invoke({"question": query})
+    message = llm_hyde.invoke(hyde_prompt.format_messages(question=query))
+    usage = extract_usage_from_ai_message(message)
+    provider_cost = extract_cost_from_ai_message(message)
 
-    hypothetical_doc = response.strip()
+    hypothetical_doc = str(message.content).strip()
 
     return {
         'document': hypothetical_doc,
-        'input_tokens': cb.prompt_tokens,
-        'output_tokens': cb.completion_tokens,
-        'cost': cb.total_cost
+        'input_tokens': int(usage['input_tokens']),
+        'output_tokens': int(usage['output_tokens']),
+        'total_tokens': int(usage['total_tokens']),
+        'usage_source': str(usage['usage_source']),
+        'cost': float(provider_cost['total_cost']) if provider_cost['total_cost'] is not None else 0.0,
+        'cost_source': str(provider_cost['cost_source'])
+    }
+
+
+def _invoke_text_with_usage(current_llm: BaseChatModel, messages: list) -> Tuple[str, Dict[str, Any]]:
+    """Invoke a model and return text plus normalized usage/cost metrics."""
+    response = current_llm.invoke(messages)
+    usage = extract_usage_from_ai_message(response)
+    provider_cost = extract_cost_from_ai_message(response)
+
+    return str(response.content).strip(), {
+        'input_tokens': int(usage['input_tokens']),
+        'output_tokens': int(usage['output_tokens']),
+        'total_tokens': int(usage['total_tokens']),
+        'usage_source': str(usage['usage_source']),
+        'cost': float(provider_cost['total_cost']) if provider_cost['total_cost'] is not None else 0.0,
+        'cost_source': str(provider_cost['cost_source']),
     }
 
 
@@ -165,16 +185,11 @@ def process_hyde_query(query: str, custom_hyde_llm: ChatOpenAI = None, custom_an
     current_answer_llm = custom_answer_llm if custom_answer_llm else llm_answer
 
     # 1. Generate hypothetical document using the appropriate model
-    with get_openai_callback() as cb:
-        response = (hyde_prompt | current_hyde_llm | StrOutputParser()
-                    ).invoke({"question": query})
-    hypothetical_doc = response.strip()
-    hyde_result = {
-        'document': hypothetical_doc,
-        'input_tokens': cb.prompt_tokens,
-        'output_tokens': cb.completion_tokens,
-        'cost': cb.total_cost
-    }
+    hypothetical_doc, hyde_result = _invoke_text_with_usage(
+        current_hyde_llm,
+        hyde_prompt.format_messages(question=query)
+    )
+    hyde_result['document'] = hypothetical_doc
 
     # 2. Retrieve similar documents
     retrieved_docs = retriever.invoke(hypothetical_doc)
@@ -183,26 +198,29 @@ def process_hyde_query(query: str, custom_hyde_llm: ChatOpenAI = None, custom_an
     formatted_context = format_docs(retrieved_docs)
 
     # 4. Generate final answer using the appropriate model
-    with get_openai_callback() as cb_answer:
-        response = current_answer_llm.invoke(qa_prompt.format_messages(
+    answer_text, answer_metrics = _invoke_text_with_usage(
+        current_answer_llm,
+        qa_prompt.format_messages(
             context=formatted_context,
             question=query
-        ))
+        )
+    )
 
     # 5. Return response and all metrics
     return {
-        'answer': response.content,
+        'answer': answer_text,
         'contexts': [doc.page_content for doc in retrieved_docs],
         'hypothetical_document': hypothetical_doc,
         'hyde_metrics': hyde_result,
-        'answer_metrics': {
-            'input_tokens': cb_answer.prompt_tokens,
-            'output_tokens': cb_answer.completion_tokens,
-            'cost': cb_answer.total_cost
-        },
-        'total_cost': hyde_result['cost'] + cb_answer.total_cost,
-        'total_input_tokens': hyde_result['input_tokens'] + cb_answer.prompt_tokens,
-        'total_output_tokens': hyde_result['output_tokens'] + cb_answer.completion_tokens
+        'answer_metrics': answer_metrics,
+        'total_cost': hyde_result['cost'] + answer_metrics['cost'],
+        'total_input_tokens': hyde_result['input_tokens'] + answer_metrics['input_tokens'],
+        'total_output_tokens': hyde_result['output_tokens'] + answer_metrics['output_tokens'],
+        'usage_sources': [hyde_result['usage_source'], answer_metrics['usage_source']],
+        'cost_sources': [
+            hyde_result['cost_source'],
+            answer_metrics['cost_source'],
+        ],
     }
 
 
@@ -226,23 +244,23 @@ def query_for_evaluation(question: str, hyde_model: str = None, answer_model: st
     # Create custom LLMs if provided, or fall back to string model names or defaults
     if custom_hyde_llm:
         final_hyde_llm = custom_hyde_llm
-        used_hyde_model = "custom"
+        hyde_model_identity = get_model_identity(llm=custom_hyde_llm)
     elif hyde_model:
         final_hyde_llm = ChatOpenAI(model_name=hyde_model, temperature=0.7)
-        used_hyde_model = hyde_model
+        hyde_model_identity = get_model_identity(model_name=hyde_model, llm=final_hyde_llm)
     else:
         final_hyde_llm = None
-        used_hyde_model = "gpt-3.5-turbo"
+        hyde_model_identity = get_model_identity(model_name="gpt-3.5-turbo", llm=llm_hyde)
     
     if custom_answer_llm:
         final_answer_llm = custom_answer_llm
-        used_answer_model = "custom"
+        answer_model_identity = get_model_identity(llm=custom_answer_llm)
     elif answer_model:
         final_answer_llm = ChatOpenAI(model_name=answer_model, temperature=0)
-        used_answer_model = answer_model
+        answer_model_identity = get_model_identity(model_name=answer_model, llm=final_answer_llm)
     else:
         final_answer_llm = None
-        used_answer_model = "gpt-4o"
+        answer_model_identity = get_model_identity(model_name="gpt-4o", llm=llm_answer)
     
     start_time = time.time()
     result = process_hyde_query(question, final_hyde_llm, final_answer_llm)
@@ -259,10 +277,16 @@ def query_for_evaluation(question: str, hyde_model: str = None, answer_model: st
             "output_tokens": result["total_output_tokens"],
             "total_cost": result["total_cost"],
             "retrieval_method": "hyde",
-            "llm_hyde_model": used_hyde_model,
-            "llm_answer_model": used_answer_model,
+            "llm_hyde_model": hyde_model_identity["model_name"],
+            "llm_answer_model": answer_model_identity["model_name"],
+            "hyde_provider": hyde_model_identity["provider"],
+            "answer_provider": answer_model_identity["provider"],
+            "hyde_model_id": hyde_model_identity["model_id"],
+            "answer_model_id": answer_model_identity["model_id"],
             "hyde_cost": result["hyde_metrics"]["cost"],
-            "answer_cost": result["answer_metrics"]["cost"]
+            "answer_cost": result["answer_metrics"]["cost"],
+            "usage_source": "+".join(result["usage_sources"]),
+            "cost_source": "+".join(result["cost_sources"]),
         }
     }
 

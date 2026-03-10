@@ -10,16 +10,17 @@ an answer based on the combined, re-ranked results.
 import os
 import time
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_core.prompts import ChatPromptTemplate, PromptTemplate
-from langchain_core.output_parsers import StrOutputParser
 from langchain_chroma import Chroma
-from langchain_community.callbacks import get_openai_callback
 from langchain_core.documents import Document
 from langchain_core.language_models import BaseChatModel
+
+from src.common.model_provider import get_model_identity
+from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
 
 # --- Environment and Path Configuration ---
 
@@ -142,6 +143,22 @@ def format_docs(docs: List[Document]) -> str:
     return "\n\n".join(formatted_docs)
 
 
+def _invoke_text_with_usage(current_llm: BaseChatModel, messages: list) -> Tuple[str, Dict[str, Any]]:
+    """Invoke a model and return plain text with normalized usage/cost metrics."""
+    response = current_llm.invoke(messages)
+    usage = extract_usage_from_ai_message(response)
+    provider_cost = extract_cost_from_ai_message(response)
+
+    return str(response.content).strip(), {
+        "input_tokens": int(usage["input_tokens"]),
+        "output_tokens": int(usage["output_tokens"]),
+        "total_tokens": int(usage["total_tokens"]),
+        "usage_source": str(usage["usage_source"]),
+        "cost": float(provider_cost["total_cost"]) if provider_cost["total_cost"] is not None else 0.0,
+        "cost_source": str(provider_cost["cost_source"]),
+    }
+
+
 def process_rewriter_query(question: str, custom_rewriter_llm: ChatOpenAI = None, custom_answer_llm: ChatOpenAI = None, max_final_docs: int = 8) -> Dict[str, Any]:
     """
     Processes a query using the multi-query rewriting RAG pipeline.
@@ -164,13 +181,14 @@ def process_rewriter_query(question: str, custom_rewriter_llm: ChatOpenAI = None
     rewrite_input_tokens, rewrite_output_tokens, rewrite_cost = 0, 0, 0
 
     for prompt in REPHRASE_PROMPTS:
-        with get_openai_callback() as cb:
-            rewritten_query = (prompt | current_rewriter_llm | StrOutputParser()).invoke(
-                {"question": question}).strip()
-            rewritten_queries.append(rewritten_query)
-            rewrite_input_tokens += cb.prompt_tokens
-            rewrite_output_tokens += cb.completion_tokens
-            rewrite_cost += cb.total_cost
+        rewritten_query, rewrite_metrics = _invoke_text_with_usage(
+            current_rewriter_llm,
+            prompt.format_messages(question=question)
+        )
+        rewritten_queries.append(rewritten_query)
+        rewrite_input_tokens += rewrite_metrics["input_tokens"]
+        rewrite_output_tokens += rewrite_metrics["output_tokens"]
+        rewrite_cost += rewrite_metrics["cost"]
 
     # 2. Retrieve documents for each rewritten query
     all_docs_with_scores = []
@@ -194,16 +212,15 @@ def process_rewriter_query(question: str, custom_rewriter_llm: ChatOpenAI = None
 
     # 4. Format context and generate final answer
     formatted_context = format_docs(retrieved_docs)
-    with get_openai_callback() as cb_answer:
-        answer = (qa_prompt | current_answer_llm | StrOutputParser()).invoke({
-            "context": formatted_context,
-            "question": question
-        })
+    answer, answer_metrics = _invoke_text_with_usage(
+        current_answer_llm,
+        qa_prompt.format_messages(context=formatted_context, question=question)
+    )
 
     # 5. Consolidate and return all information
-    total_input = rewrite_input_tokens + cb_answer.prompt_tokens
-    total_output = rewrite_output_tokens + cb_answer.completion_tokens
-    total_cost = rewrite_cost + cb_answer.total_cost
+    total_input = rewrite_input_tokens + answer_metrics["input_tokens"]
+    total_output = rewrite_output_tokens + answer_metrics["output_tokens"]
+    total_cost = rewrite_cost + answer_metrics["cost"]
 
     return {
         'answer': answer,
@@ -214,12 +231,14 @@ def process_rewriter_query(question: str, custom_rewriter_llm: ChatOpenAI = None
             'rewrite_input_tokens': rewrite_input_tokens,
             'rewrite_output_tokens': rewrite_output_tokens,
             'rewrite_cost': rewrite_cost,
-            'answer_input_tokens': cb_answer.prompt_tokens,
-            'answer_output_tokens': cb_answer.completion_tokens,
-            'answer_cost': cb_answer.total_cost,
+            'answer_input_tokens': answer_metrics['input_tokens'],
+            'answer_output_tokens': answer_metrics['output_tokens'],
+            'answer_cost': answer_metrics['cost'],
             'total_input_tokens': total_input,
             'total_output_tokens': total_output,
             'total_cost': total_cost,
+            'usage_source': answer_metrics['usage_source'],
+            'cost_source': answer_metrics['cost_source'],
         }
     }
 
@@ -241,23 +260,23 @@ def query_for_evaluation(question: str, rewriter_model: str = None, answer_model
     # Create custom LLMs if provided, or fall back to string model names or defaults
     if custom_rewriter_llm:
         final_rewriter_llm = custom_rewriter_llm
-        used_rewriter_model = "custom"
+        rewriter_model_identity = get_model_identity(llm=custom_rewriter_llm)
     elif rewriter_model:
         final_rewriter_llm = ChatOpenAI(model_name=rewriter_model, temperature=0.3)
-        used_rewriter_model = rewriter_model
+        rewriter_model_identity = get_model_identity(model_name=rewriter_model, llm=final_rewriter_llm)
     else:
         final_rewriter_llm = None
-        used_rewriter_model = "gpt-3.5-turbo"
+        rewriter_model_identity = get_model_identity(model_name="gpt-3.5-turbo", llm=llm_rewriter)
     
     if custom_answer_llm:
         final_answer_llm = custom_answer_llm
-        used_answer_model = "custom"
+        answer_model_identity = get_model_identity(llm=custom_answer_llm)
     elif answer_model:
         final_answer_llm = ChatOpenAI(model_name=answer_model, temperature=0)
-        used_answer_model = answer_model
+        answer_model_identity = get_model_identity(model_name=answer_model, llm=final_answer_llm)
     else:
         final_answer_llm = None
-        used_answer_model = "gpt-4o"
+        answer_model_identity = get_model_identity(model_name="gpt-4o", llm=llm_answer)
     
     start_time = time.time()
     result = process_rewriter_query(question, final_rewriter_llm, final_answer_llm)
@@ -276,13 +295,19 @@ def query_for_evaluation(question: str, rewriter_model: str = None, answer_model
             "num_contexts": len(result["contexts"]),
             "retrieval_method": "multi_query_rewrite",
             "rewrite_count": len(REPHRASE_PROMPTS),
-            "llm_model": used_answer_model,
-            "rewriter_model": used_rewriter_model,
+            "llm_model": answer_model_identity["model_name"],
+            "rewriter_model": rewriter_model_identity["model_name"],
+            "provider": answer_model_identity["provider"],
+            "model_id": answer_model_identity["model_id"],
+            "rewriter_provider": rewriter_model_identity["provider"],
+            "rewriter_model_id": rewriter_model_identity["model_id"],
             "execution_time": execution_time,
             "input_tokens": total_input,
             "output_tokens": total_output,
             "total_cost": result['metrics']['total_cost'],
             "tokens_used": total_input + total_output,
+            "usage_source": result['metrics']['usage_source'],
+            "cost_source": result['metrics']['cost_source'],
         }
     }
 

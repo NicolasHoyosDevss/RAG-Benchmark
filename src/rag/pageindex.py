@@ -12,10 +12,12 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from dotenv import load_dotenv
-from langchain_community.callbacks import get_openai_callback
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 from pageindex import PageIndexAPIError, PageIndexClient
+
+from src.common.model_provider import get_model_identity
+from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
 
 
 # --- Environment and Path Configuration ---
@@ -179,10 +181,11 @@ def process_pageindex_query(
     formatted_context = _format_contexts(contexts)
 
     current_llm = custom_llm if custom_llm else llm
-    with get_openai_callback() as cb_answer:
-        response = current_llm.invoke(
-            qa_prompt.format_messages(context=formatted_context, question=query)
-        )
+    response = current_llm.invoke(
+        qa_prompt.format_messages(context=formatted_context, question=query)
+    )
+    usage = extract_usage_from_ai_message(response)
+    provider_cost = extract_cost_from_ai_message(response)
 
     return {
         "answer": response.content,
@@ -190,9 +193,12 @@ def process_pageindex_query(
         "retrieved_nodes": retrieval_result.get("retrieved_nodes", []),
         "retrieval_result": retrieval_result,
         "metrics": {
-            "input_tokens": cb_answer.prompt_tokens,
-            "output_tokens": cb_answer.completion_tokens,
-            "cost": cb_answer.total_cost,
+            "input_tokens": int(usage["input_tokens"]),
+            "output_tokens": int(usage["output_tokens"]),
+            "total_tokens": int(usage["total_tokens"]),
+            "usage_source": str(usage["usage_source"]),
+            "cost": float(provider_cost["total_cost"]) if provider_cost["total_cost"] is not None else 0.0,
+            "cost_source": str(provider_cost["cost_source"]),
             "retrieval_id": retrieval_id,
             "doc_id": effective_doc_id,
         },
@@ -228,7 +234,7 @@ def query_for_evaluation(
             doc_id=doc_id,
             thinking=thinking,
         )
-        used_model = "custom"
+        model_identity = get_model_identity(llm=custom_llm)
     elif llm_model:
         custom_llm_instance = ChatOpenAI(model_name=llm_model, temperature=0)
         result = process_pageindex_query(
@@ -237,10 +243,10 @@ def query_for_evaluation(
             doc_id=doc_id,
             thinking=thinking,
         )
-        used_model = llm_model
+        model_identity = get_model_identity(model_name=llm_model, llm=custom_llm_instance)
     else:
         result = process_pageindex_query(question, doc_id=doc_id, thinking=thinking)
-        used_model = "gpt-4o"
+        model_identity = get_model_identity(model_name="gpt-4o", llm=llm)
 
     execution_time = time.time() - start_time
     input_tokens = result["metrics"]["input_tokens"]
@@ -254,12 +260,16 @@ def query_for_evaluation(
         "metadata": {
             "num_contexts": len(result["contexts"]),
             "retrieval_method": "pageindex",
-            "llm_model": used_model,
+            "llm_model": model_identity["model_name"],
+            "provider": model_identity["provider"],
+            "model_id": model_identity["model_id"],
             "execution_time": execution_time,
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
             "total_cost": result["metrics"]["cost"],
             "tokens_used": input_tokens + output_tokens,
+            "usage_source": result["metrics"]["usage_source"],
+            "cost_source": result["metrics"]["cost_source"],
             "doc_id": result["metrics"]["doc_id"],
             "retrieval_id": result["metrics"]["retrieval_id"],
             "pageindex_thinking": thinking,

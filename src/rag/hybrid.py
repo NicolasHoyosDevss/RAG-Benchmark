@@ -14,13 +14,14 @@ from typing import List, Dict, Any, Optional
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_chroma import Chroma
-from langchain_community.callbacks import get_openai_callback
 from langchain_core.documents import Document
 from langchain_core.language_models import BaseChatModel
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
+
+from src.common.model_provider import get_model_identity
+from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
 
 # --- Environment and Path Configuration ---
 
@@ -148,11 +149,12 @@ def process_hybrid_query(query: str, custom_llm: ChatOpenAI = None) -> Dict[str,
 
     # 3. Generate final answer using custom model if provided, else use default
     current_llm = custom_llm if custom_llm else llm
-    with get_openai_callback() as cb_answer:
-        response = current_llm.invoke(qa_prompt.format_messages(
-            context=formatted_context,
-            question=query
-        ))
+    response = current_llm.invoke(qa_prompt.format_messages(
+        context=formatted_context,
+        question=query
+    ))
+    usage = extract_usage_from_ai_message(response)
+    provider_cost = extract_cost_from_ai_message(response)
 
     # 4. Return response and all metrics
     return {
@@ -160,9 +162,12 @@ def process_hybrid_query(query: str, custom_llm: ChatOpenAI = None) -> Dict[str,
         'contexts': [doc.page_content for doc in retrieved_docs],
         'retrieved_documents': retrieved_docs,
         'metrics': {
-            'input_tokens': cb_answer.prompt_tokens,
-            'output_tokens': cb_answer.completion_tokens,
-            'cost': cb_answer.total_cost
+            'input_tokens': int(usage['input_tokens']),
+            'output_tokens': int(usage['output_tokens']),
+            'total_tokens': int(usage['total_tokens']),
+            'usage_source': str(usage['usage_source']),
+            'cost': float(provider_cost['total_cost']) if provider_cost['total_cost'] is not None else 0.0,
+            'cost_source': str(provider_cost['cost_source'])
         }
     }
 
@@ -187,14 +192,14 @@ def query_for_evaluation(question: str, llm_model: str = None, custom_llm: Optio
     # Determine which LLM to use: custom_llm takes precedence, then llm_model string, then default
     if custom_llm:
         result = process_hybrid_query(question, custom_llm)
-        used_model = "custom"
+        model_identity = get_model_identity(llm=custom_llm)
     elif llm_model:
         custom_llm_instance = ChatOpenAI(model_name=llm_model, temperature=0)
         result = process_hybrid_query(question, custom_llm_instance)
-        used_model = llm_model
+        model_identity = get_model_identity(model_name=llm_model, llm=custom_llm_instance)
     else:
         result = process_hybrid_query(question)
-        used_model = "gpt-4o"  # Default model
+        model_identity = get_model_identity(model_name="gpt-4o", llm=llm)
         
     end_time = time.time()
     execution_time = end_time - start_time
@@ -211,13 +216,17 @@ def query_for_evaluation(question: str, llm_model: str = None, custom_llm: Optio
             "num_contexts": len(result["contexts"]),
             "retrieval_method": "hybrid_bm25_semantic",
             "ensemble_weights": [ensemble_weight_bm25, ensemble_weight_semantic],
-            "llm_model": used_model,
+            "llm_model": model_identity["model_name"],
+            "provider": model_identity["provider"],
+            "model_id": model_identity["model_id"],
             "embedding_model": "text-embedding-3-small",
             "execution_time": execution_time,
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
             "total_cost": result["metrics"]["cost"],
             "tokens_used": input_tokens + output_tokens,
+            "usage_source": result["metrics"]["usage_source"],
+            "cost_source": result["metrics"]["cost_source"],
         }
     }
 
