@@ -71,8 +71,8 @@
         "average_execution_time": 20.335,
         "total_input_tokens": 19865,
         "total_output_tokens": 5707,
-        "total_cost": 0.101674,
-        "average_cost_per_question": 0.010167,
+        "total_cost": 0.045188,
+        "average_cost_per_question": 0.004519,
         "overall_average_score": 0.761
       }
     }
@@ -97,7 +97,7 @@
             "execution_time": 17.965030431747437,
             "input_tokens": 2027,
             "output_tokens": 475,
-            "total_cost": 0.0089825152,
+            "total_cost": 0.003992229,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -122,7 +122,7 @@
             "execution_time": 30.722628355026245,
             "input_tokens": 2038,
             "output_tokens": 913,
-            "total_cost": 0.0153613142,
+            "total_cost": 0.0068272507,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -147,7 +147,7 @@
             "execution_time": 19.352624654769897,
             "input_tokens": 2051,
             "output_tokens": 531,
-            "total_cost": 0.0096763123,
+            "total_cost": 0.0043005833,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -172,7 +172,7 @@
             "execution_time": 17.740450620651245,
             "input_tokens": 2071,
             "output_tokens": 493,
-            "total_cost": 0.0088702253,
+            "total_cost": 0.0039423224,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -197,7 +197,7 @@
             "execution_time": 15.4361732006073,
             "input_tokens": 1836,
             "output_tokens": 431,
-            "total_cost": 0.0077180866,
+            "total_cost": 0.0034302607,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -222,7 +222,7 @@
             "execution_time": 17.510099172592163,
             "input_tokens": 1888,
             "output_tokens": 472,
-            "total_cost": 0.0087550496,
+            "total_cost": 0.0038911331,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -247,7 +247,7 @@
             "execution_time": 15.97390627861023,
             "input_tokens": 1682,
             "output_tokens": 445,
-            "total_cost": 0.0079869531,
+            "total_cost": 0.003549757,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -272,7 +272,7 @@
             "execution_time": 29.18291711807251,
             "input_tokens": 2060,
             "output_tokens": 864,
-            "total_cost": 0.0145914586,
+            "total_cost": 0.0064850927,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -297,7 +297,7 @@
             "execution_time": 18.638925075531006,
             "input_tokens": 2166,
             "output_tokens": 500,
-            "total_cost": 0.0093194625,
+            "total_cost": 0.0041419834,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
@@ -322,7 +322,7 @@
             "execution_time": 20.82524585723877,
             "input_tokens": 2046,
             "output_tokens": 583,
-            "total_cost": 0.0104126229,
+            "total_cost": 0.0046278324,
             "cost_source": "estimated_hf_endpoint_pricing"
           }
         }
