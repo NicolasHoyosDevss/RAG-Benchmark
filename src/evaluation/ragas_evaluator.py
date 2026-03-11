@@ -43,6 +43,7 @@ from src.rag.pageindex import query_for_evaluation as pageindex_query_for_evalua
 
 # Model provider imports
 from src.common.model_provider import ModelConfig, create_llm, MODELS_REGISTRY
+from src.common.pricing import get_pricing_config_summary
 
 # Obstetric and pregnancy specific dataset
 DATA_GT = [
@@ -223,7 +224,8 @@ class RAGASEvaluator:
                     "execution_time": metadata.get("execution_time", 0.0),
                     "input_tokens": metadata.get("input_tokens", 0),
                     "output_tokens": metadata.get("output_tokens", 0),
-                    "total_cost": metadata.get("total_cost", 0.0)
+                    "total_cost": metadata.get("total_cost", 0.0),
+                    "cost_source": metadata.get("cost_source", "missing")
                 }
                 self.performance_metadata.append(performance_data)
                 
@@ -533,6 +535,7 @@ class RAGASEvaluator:
                 "rags_evaluated": [self.rag_type],
                 "model_used": model_name
             },
+            "pricing_config": get_pricing_config_summary(),
             "summary": {
                 self.rag_type: {
                     "rag_name": self.rag_name,
@@ -752,6 +755,7 @@ class RAGASEvaluator:
                 "dataset_size": num_questions,
                 "models_evaluated": models_evaluated
             },
+            "pricing_config": get_pricing_config_summary(),
             "summary": summary,
             "question_by_question": question_by_question
         }

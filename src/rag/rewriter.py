@@ -21,6 +21,7 @@ from langchain_core.language_models import BaseChatModel
 
 from src.common.model_provider import get_model_identity
 from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
+from src.common.pricing import resolve_total_cost
 
 # --- Environment and Path Configuration ---
 
@@ -183,7 +184,7 @@ def process_rewriter_query(question: str, custom_rewriter_llm: ChatOpenAI = None
     for prompt in REPHRASE_PROMPTS:
         rewritten_query, rewrite_metrics = _invoke_text_with_usage(
             current_rewriter_llm,
-            prompt.format_messages(question=question)
+            prompt.format(question=question)
         )
         rewritten_queries.append(rewritten_query)
         rewrite_input_tokens += rewrite_metrics["input_tokens"]
@@ -285,6 +286,16 @@ def query_for_evaluation(question: str, rewriter_model: str = None, answer_model
 
     total_input = result['metrics']['total_input_tokens']
     total_output = result['metrics']['total_output_tokens']
+    resolved_cost = resolve_total_cost(
+        provider=answer_model_identity["provider"],
+        model_name=answer_model_identity["model_name"],
+        model_id=answer_model_identity["model_id"],
+        input_tokens=total_input,
+        output_tokens=total_output,
+        provider_reported_cost=result['metrics']['total_cost'],
+        provider_cost_source=result['metrics']['cost_source'],
+        execution_time_seconds=execution_time,
+    )
 
     return {
         "question": question,
@@ -304,10 +315,10 @@ def query_for_evaluation(question: str, rewriter_model: str = None, answer_model
             "execution_time": execution_time,
             "input_tokens": total_input,
             "output_tokens": total_output,
-            "total_cost": result['metrics']['total_cost'],
+            "total_cost": resolved_cost["total_cost"],
             "tokens_used": total_input + total_output,
             "usage_source": result['metrics']['usage_source'],
-            "cost_source": result['metrics']['cost_source'],
+            "cost_source": resolved_cost["cost_source"],
         }
     }
 

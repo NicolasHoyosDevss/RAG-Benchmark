@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-11T09:59:01.154036",
+    "evaluation_type": "single_rag_evaluation_hybrid-rrf",
+    "dataset_size": 10,
+    "rags_evaluated": [
+      "hybrid-rrf"
+    ],
+    "model_used": "microsoft/MediPhi-Instruct"
+  },
+  "pricing_config": {
+    "openai_models": {
+      "gpt-4o": {
+        "input_rate_per_1m": 2.5,
+        "output_rate_per_1m": 10.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "gpt-5": {
+        "input_rate_per_1m": 1.25,
+        "output_rate_per_1m": 15.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "gpt-5.2": {
+        "input_rate_per_1m": 1.75,
+        "output_rate_per_1m": 14.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      }
+    },
+    "huggingface_endpoints": {
+      "mediphi": {
+        "cloud_provider": "aws",
+        "instance_family": "nvidia-L4",
+        "instance_size": "x1",
+        "accelerator": "NVIDIA L4",
+        "gpu_count": 1,
+        "vram_gb": 24.0,
+        "hourly_rate_usd": 1.8,
+        "replicas": 1,
+        "allocation_mode": "runtime_proportional",
+        "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "medgemma": {
+        "cloud_provider": "aws",
+        "instance_family": "nvidia-A10G",
+        "instance_size": "x1",
+        "accelerator": "NVIDIA A10G",
+        "gpu_count": 1,
+        "vram_gb": 24.0,
+        "hourly_rate_usd": 1.8,
+        "replicas": 1,
+        "allocation_mode": "runtime_proportional",
+        "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+        "pricing_updated_at": "2026-03-11"
+      }
+    }
+  },
+  "summary": {
+    "hybrid-rrf": {
+      "rag_name": "Hybrid RAG + RRF (BM25 + Semantic)",
+      "metrics": {
+        "faithfulness": 0.7657142857142858,
+        "answer_relevancy": 0.9674321863077407,
+        "context_precision": 0.8270833333053507,
+        "context_recall": 0.6
+      },
+      "performance": {
+        "average_execution_time": 5.766,
+        "total_input_tokens": 11536,
+        "total_output_tokens": 1106,
+        "total_cost": 0.028829,
+        "average_cost_per_question": 0.002883,
+        "overall_average_score": 0.79
+      }
+    }
+  },
+  "question_by_question": [
+    {
+      "question_id": 1,
+      "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+      "ground_truth": "El Ginecobstetra en la semana 28 - 30 y semana 34 – 36.",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " En el embarazo de curso normal, se recomienda que las gestantes sean reevaluadas para el riesgo clínico en la semana 28 de gestación, utilizando la escala de riesgo de Herrera & Hurtado. Si se identifica riesgo, se debe remitir a una consulta especializada para garantizar la continuidad con el grupo de control.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.25,
+            "answer_relevancy": 0.9612954544943483,
+            "context_precision": 0.9999999999,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+            "execution_time": 9.123941659927368,
+            "input_tokens": 1151,
+            "output_tokens": 89,
+            "total_cost": 0.0045619708,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 2,
+      "question": "Cual es la semana ideal para iniciar los controles prenatales",
+      "ground_truth": "Se recomienda realizar el primer control prenatal en el primer trimestre, idealmente antes de la semana 10 de gestación.",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " La semana ideal para iniciar los controles prenatales es antes de la semana 12 de embarazo, según las recomendaciones de la Organización Mundial de la Salud (OMS). Esto permite la detección precoz de riesgos modificables y la supervisión efectiva de la salud de la mujer durante el embarazo.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9627230602134075,
+            "context_precision": 0.94999999997625,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es la semana ideal para iniciar los controles prenatales",
+            "execution_time": 5.119440317153931,
+            "input_tokens": 1066,
+            "output_tokens": 85,
+            "total_cost": 0.0025597202,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 3,
+      "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+      "ground_truth": "después de la semana 16 – 18",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " El inicio tardío de controles prenatales se considera cuando una gestante comienza sus controles después de la semana 26 de gestación. En este caso, se recomienda que el primer control incluya todas las actividades recomendadas para los controles previos y las que corresponden a la consulta actual, con una duración de 40 minutos.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9774030882977348,
+            "context_precision": 0.0,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+            "execution_time": 4.2996697425842285,
+            "input_tokens": 1139,
+            "output_tokens": 88,
+            "total_cost": 0.0021498349,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 4,
+      "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+      "ground_truth": "se recomienda un programa de diez citas. Para una mujer multípara con un embarazo de curso normal se recomienda un programa de siete citas",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " La cantidad ideal de controles prenatales para una gestación de curso normal es de 10 a 12 citas, según lo sugerido por la Dra. Janet Campbell en 1929 y apoyado por revisiones sistemáticas que compararon diferentes frecuencias de citas. Estos controles ayudan a monitorear el bienestar fetal y reducir la mortalidad perinatal.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.4,
+            "answer_relevancy": 0.9801774827184889,
+            "context_precision": 0.8666666666377778,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+            "execution_time": 4.8461174964904785,
+            "input_tokens": 1202,
+            "output_tokens": 102,
+            "total_cost": 0.0024230587,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+      "ground_truth": "Se recomienda evaluar el riesgo biológico y psicosocial a todas las gestantes mediante la escala de Herrera & Hurtado",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " La valoración de riesgo psicosocial en los controles prenatales se realiza mediante la escala \"Antenatal Psychosocial Health Assessment\" (ALPHA), que ha demostrado ser más efectiva que las consultas rutinarias de control prenatal para detectar problemas psicosociales. Esta herramienta permite una clasificación de las gestantes en categorías de riesgo y facilita la identificación de necesidades de atención especializada.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.9639864468686618,
+            "context_precision": 0.8041666666465626,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+            "execution_time": 5.118082761764526,
+            "input_tokens": 1138,
+            "output_tokens": 113,
+            "total_cost": 0.0025590414,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 6,
+      "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+      "ground_truth": "Se recomienda que las gestantes de bajo riesgo reciban en el momento de la inscripción al control prenatal, y luego en cada trimestre, una valoración de riesgo psicosocial",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " La valoración de riesgo psicosocial debe realizarse en el momento de la inscripción al control prenatal y luego en cada trimestre, según lo recomendado en el Documento 1. Esto permite identificar y manejar posibles complicaciones que puedan afectar el embarazo y el parto.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.6,
+            "answer_relevancy": 0.9517885635362026,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+            "execution_time": 3.8593509197235107,
+            "input_tokens": 1149,
+            "output_tokens": 79,
+            "total_cost": 0.0019296755,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 7,
+      "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+      "ground_truth": "Se recomienda que, en el primer control prenatal, en la semana 28 de gestación y en la consulta de puerperio se identifique el riesgo de depresión postparto",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " El tamizaje para depresión posparto se recomienda realizar trimestralmente durante el control prenatal. Esto se basa en la evidencia de que las mujeres con depresión durante el embarazo tienen un mayor riesgo de parto pretérmino y bajo peso al nacer. Además, se sugiere utilizar escalas psiquiátricas semiestructuradas de 30-60 min para una detección efectiva.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.968869988135355,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+            "execution_time": 5.016960620880127,
+            "input_tokens": 1102,
+            "output_tokens": 111,
+            "total_cost": 0.0025084803,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 8,
+      "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+      "ground_truth": "La probabilidad de parto vaginal es de 74% luego de una cesárea sin otros riesgos asociados.",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " La probabilidad de parto vaginal luego de una cesárea es de 74%, según la guía de embarazo y parto. Esto se basa en la recomendación de informar a las mujeres que opten por una prueba de trabajo de parto después de una cesárea previa. La evidencia muestra que el trabajo de parto después de una cesárea previa es una opción razonable y segura, con riesgos similares para el resultado materno y neonatal.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.9972878183550362,
+            "context_precision": 0.6999999999766667,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+            "execution_time": 5.44252347946167,
+            "input_tokens": 1153,
+            "output_tokens": 119,
+            "total_cost": 0.0027212617,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 9,
+      "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+      "ground_truth": "Se recomienda registrar el Índice de Masa Corporal (IMC) de la gestante en la cita de inscripción al control prenatal (alrededor de la semana 10) y con base en este establecer las metas de ganancia de peso durante la gestación de acuerdo a los siguientes parámetros: • IMC < 20 kg/m2 = ganancia entre 12 a 18 Kg • IMC entre 20 y 24,9 kg/m2 = ganancia entre 10 a 13 Kg • IMC entre 25 y 29,9 kg/m2 = ganancia entre 7 a 10 Kg • IMC > 30 kg/m2 = ganancia entre 6 a 7 Kg",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " Las metas de ganancia de peso durante la gestación varían según el Índice de Masa Corporal (IMC) de la gestante. Para una IMC menor a 20 kg/m2, la ganancia recomendada es entre 12 y 18 kg. Si el IMC está entre 20 y 24,9 kg/m2, la ganancia debe ser entre 10 y 13 kg. Para una IMC entre 25 y 29,9 kg/m2, la ganancia recomendada es entre 7 y 10 kg. Y para una IMC superior a 30 kg/m2, la ganancia debe ser entre 6 y 7 kg. Estas metas son cruciales para un embarazo saludable y se establecen en la cita de inscripción al control prenatal.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.8571428571428571,
+            "answer_relevancy": 0.9605095315366845,
+            "context_precision": 0.94999999997625,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+            "execution_time": 8.789220094680786,
+            "input_tokens": 1216,
+            "output_tokens": 199,
+            "total_cost": 0.00439461,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 10,
+      "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+      "ground_truth": "A juicio del médico tratante, las intervenciones recomendadas para la reducción de la náusea y el vómito incluyen el jengibre, los antihistamínicos y la vitamina B6",
+      "rag_results": {
+        "hybrid-rrf": {
+          "answer": " El tratamiento para las náuseas y vómitos en la primera mitad del embarazo incluye el uso de jengibre, antihistamínicos y vitamina B6. Estas intervenciones se recomiendan para mejorar los síntomas y se basan en evidencias de estudios clínicos que demuestran su eficacia y seguridad. Además, se sugiere que las mujeres reciban información sobre la gestación y las posibles soluciones para manejar estos síntomas.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9502804289214885,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+            "execution_time": 6.042544603347778,
+            "input_tokens": 1220,
+            "output_tokens": 121,
+            "total_cost": 0.0030212723,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    }
+  ]
+}

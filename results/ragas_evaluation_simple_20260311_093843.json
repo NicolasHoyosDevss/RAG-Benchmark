@@ -1,0 +1,332 @@
+{
+  "metadata": {
+    "timestamp": "2026-03-11T09:38:43.085121",
+    "evaluation_type": "single_rag_evaluation_simple",
+    "dataset_size": 10,
+    "rags_evaluated": [
+      "simple"
+    ],
+    "model_used": "google/medgemma-1.5-4b-it"
+  },
+  "pricing_config": {
+    "openai_models": {
+      "gpt-4o": {
+        "input_rate_per_1m": 2.5,
+        "output_rate_per_1m": 10.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "gpt-5": {
+        "input_rate_per_1m": 1.25,
+        "output_rate_per_1m": 15.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "gpt-5.2": {
+        "input_rate_per_1m": 1.75,
+        "output_rate_per_1m": 14.0,
+        "pricing_source_url": "https://developers.openai.com/api/pricing/",
+        "pricing_updated_at": "2026-03-11"
+      }
+    },
+    "huggingface_endpoints": {
+      "mediphi": {
+        "cloud_provider": "aws",
+        "instance_family": "nvidia-L4",
+        "instance_size": "x1",
+        "accelerator": "NVIDIA L4",
+        "gpu_count": 1,
+        "vram_gb": 24.0,
+        "hourly_rate_usd": 1.8,
+        "replicas": 1,
+        "allocation_mode": "runtime_proportional",
+        "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+        "pricing_updated_at": "2026-03-11"
+      },
+      "medgemma": {
+        "cloud_provider": "aws",
+        "instance_family": "nvidia-A10G",
+        "instance_size": "x1",
+        "accelerator": "NVIDIA A10G",
+        "gpu_count": 1,
+        "vram_gb": 24.0,
+        "hourly_rate_usd": 1.8,
+        "replicas": 1,
+        "allocation_mode": "runtime_proportional",
+        "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+        "pricing_updated_at": "2026-03-11"
+      }
+    }
+  },
+  "summary": {
+    "simple": {
+      "rag_name": "Simple Semantic RAG",
+      "metrics": {
+        "faithfulness": 0.8503661560317907,
+        "answer_relevancy": 0.26467160516971017,
+        "context_precision": 0.7788888888660509,
+        "context_recall": 0.6
+      },
+      "performance": {
+        "average_execution_time": 11.316,
+        "total_input_tokens": 9348,
+        "total_output_tokens": 5120,
+        "total_cost": 0.056579,
+        "average_cost_per_question": 0.005658,
+        "overall_average_score": 0.623
+      }
+    }
+  },
+  "question_by_question": [
+    {
+      "question_id": 1,
+      "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+      "ground_truth": "El Ginecobstetra en la semana 28 - 30 y semana 34 – 36.",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know *when* and *who* should re-evaluate the clinical risk of a patient with a normal pregnancy course, based *only* on the provided medical context.\n\n2.  **Scan the context for keywords:** Look for terms like \"re-evaluate,\" \"risk,\" \"clinical risk,\" \"reassessment,\" \"follow-up,\" \"normal pregnancy,\" \"course normal,\" \"gestantes,\" \"control prenatal,\" \"tamizadas,\" \"anemia,\" \"semanas 28,\" \"riesgo psicosocial,\" \"escalas de riesgo,\" \"bajo riesgo,\" \"alto riesgo,\" \"enfermera,\" \"médico general,\" \"equipo especializado,\" \"consulta especializada,\" \"entrevista,\" \"trimestre.\"\n\n3.  **Analyze Document 1:** Mentions screening for anemia at registration and week 28 for normal pregnancies. Doesn't mention re-evaluation of *clinical risk* specifically.\n\n4.  **Analyze Document 2:** Discusses risk categories (low vs. high) based on evidence and scales (like Herrera & Hurtado). Doesn't mention re-evaluation timing or who does it.\n\n5.  **Analyze Document 3:** Discusses evaluating psychosocial factors as risk determinants, recommending routine evaluation during prenatal care. Doesn't mention re-evaluation timing or who does it.\n\n6.  **Analyze Document 4:** Recommends psychosocial risk assessment for *low-risk* patients at registration and each trimester. If risk is identified, referral to a specialist is recommended. Doesn't mention re-evaluation of *clinical risk* specifically, only psychosocial risk for low-risk patients.\n\n7.  **Analyze Document 5:** Mentions using the Herrera & Hurtado scale (weeks 14-27, 28-32, 33-42) to classify risk (high if 3+ points). It mentions evaluating maternal and perinatal outcomes in all pregnancies, including high-risk ones. It doesn't explicitly state *when* the risk is re-evaluated or *who* does it, only that the scale is used for classification and outcomes are evaluated.\n\n8.  **Synthesize findings:**\n    *   The context mentions screening for anemia at registration and week 28.\n    *   It mentions evaluating psychosocial risk for low-risk patients at registration and each trimester.\n    *   It",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.7499999999625,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿En qué momento y quien debe reevaluar el riesgo clínico de una paciente con embarazo de curso normal?",
+            "execution_time": 16.701202154159546,
+            "input_tokens": 920,
+            "output_tokens": 512,
+            "total_cost": 0.0083506011,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 2,
+      "question": "Cual es la semana ideal para iniciar los controles prenatales",
+      "ground_truth": "Se recomienda realizar el primer control prenatal en el primer trimestre, idealmente antes de la semana 10 de gestación.",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the ideal week to start prenatal check-ups.\n\n2.  **Scan the documents for keywords:** Look for \"control prenatal\", \"primera visita\", \"iniciar\", \"semana\", \"ideal\", \"recomienda\", \"OMS\".\n\n3.  **Analyze Document 1:** Mentions \"primer control prenatal tardío\" and \"duración de 40 minutos\". Doesn't specify the *start* week.\n\n4.  **Analyze Document 2:** Explicitly states: \"dó que el primer control prenatal debe realizarse preferentemente antes de la semana 12 de embarazo.\" Also mentions the duration (30-40 minutes) and the need for examination according to norms. This is a direct answer.\n\n5.  **Analyze Document 3:** Discusses recommendations from 1929 (Dr. Campbell) and later OMS (2003) suggesting a reduced schedule (four visits). Doesn't specify the *start* week, but reinforces the importance of prenatal care.\n\n6.  **Analyze Document 4:** Mentions preconception or first prenatal visit *before week 10* for early detection. This is a specific recommendation but not the *general* ideal start week.\n\n7.  **Analyze Document 5:** Summarizes OMS recommendation: \"el primer control prenatal debe realizarse preferentemente antes de la semana 12 de embarazo.\" This confirms Document 2.\n\n8.  **Synthesize the findings:**\n    *   Document 2 and Document 5 state the ideal time is *before* week 12.\n    *   Document 4 suggests *before* week 10 for early detection.\n    *   Document 1 mentions a 40-minute duration.\n    *   Document 3 discusses different schedules but doesn't give a specific start week.\n\n9.  **Formulate the answer:**\n    *   Start with the most direct answer based on the strongest evidence (Document 2/5).\n    *   Incorporate the specific recommendation from Document 4 about early detection (before week 10).\n    *   Mention the duration from Document 1 as supporting detail.\n    *   Ensure the answer is in Spanish and flows well.\n\n10. **Draft the answer (Spanish):** La semana ideal para iniciar los controles prenatales es prefer",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.5333333333155555,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es la semana ideal para iniciar los controles prenatales",
+            "execution_time": 10.95576548576355,
+            "input_tokens": 839,
+            "output_tokens": 512,
+            "total_cost": 0.0054778827,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 3,
+      "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+      "ground_truth": "después de la semana 16 – 18",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know when a prenatal check-up is considered \"late\" (inicio tardío).\n\n2.  **Scan the documents for keywords:** Look for \"tardío\", \"inicio tardío\", \"consulta\", \"control prenatal\", \"gestante\", \"embarazo\".\n\n3.  **Analyze Document 1:** Mentions \"primer control prenatal tardío\" but doesn't define it. It mentions a 40-minute duration for this specific type of visit.\n\n4.  **Analyze Document 2:** This document explicitly defines \"inicio tardío de controles prenatal\". It states: \"Cuando una gestante comience tardíamente su control prenatal, sobre todo después de la semana 26 de gestación, se recomienda tener en su primer control todas las actividades recomendadas para los controles previos, así como aquéllas que corresponden a la consulta actual.\" This directly answers the question.\n\n5.  **Analyze Document 3:** Discusses preconception and early prenatal visits (before week 10) for early detection of risks. It doesn't define late visits.\n\n6.  **Analyze Document 4:** Discusses the *duration* of prenatal visits (sufficient time for discussion, evaluation, admin tasks). It doesn't define late visits.\n\n7.  **Analyze Document 5:** Discusses risk factors associated with preterm birth (advanced maternal age, young maternal age, history of preterm birth, lack of prenatal care). It doesn't define late visits.\n\n8.  **Synthesize the answer:** Document 2 provides the definition. The key phrase is \"Cuando una gestante comience tardíamente su control prenatal, sobre todo después de la semana 26 de gestación\".\n\n9.  **Formulate the answer in Spanish:**\n    *   Start with the direct answer based on Document 2.\n    *   Incorporate the specific timeframe mentioned in Document 2 (\"después de la semana 26 de gestación\").\n    *   Ensure the answer is concise and directly addresses the question.\n    *   Check against the instructions: Base only on context, direct answer, integrated details, state if info missing (not applicable here), answer in Spanish.\n\n10. **Final Answer Construction:** \"Según el documento 2, se considera inicio tardío de controles prenatales cuando una gestante comience tardíamente su control prenatal, sobre",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.36363636363636365,
+            "answer_relevancy": 0.8680357469463127,
+            "context_precision": 0.0,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuándo se considera inicio tardío de controles prenatales?",
+            "execution_time": 10.408691167831421,
+            "input_tokens": 930,
+            "output_tokens": 512,
+            "total_cost": 0.0052043456,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 4,
+      "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+      "ground_truth": "se recomienda un programa de diez citas. Para una mujer multípara con un embarazo de curso normal se recomienda un programa de siete citas",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the ideal number of prenatal controls.\n\n2.  **Scan the documents for keywords:** Look for \"controles prenatales,\" \"número,\" \"cantidad,\" \"ideal,\" \"recomendado,\" \"frecuencia,\" \"esquema,\" \"modelo.\"\n\n3.  **Analyze Document 1:** Mentions a late prenatal control duration (40 minutes) and cites Janet Campbell's suggestion for effective supervision, but doesn't specify the *number* of controls.\n\n4.  **Analyze Document 2:** Discusses reduced prenatal controls and long intervals, linking them to increased perinatal mortality in developing countries. This implies *fewer* controls are *not* ideal, but doesn't give a specific number.\n\n5.  **Analyze Document 3:** Focuses on fetal well-being monitoring during prenatal controls, its purpose (reducing mortality, avoiding unnecessary interventions), but doesn't state the ideal *number* of controls.\n\n6.  **Analyze Document 4:** Mentions two systematic reviews comparing reduced vs. standard prenatal controls (44 vs. 49 visits). It states that the reduced model *may* be equally effective in terms of mortality and morbidity, but doesn't explicitly state the *ideal* number. It *does* suggest that a reduced number *could* be equally effective as a higher number (10-12).\n\n7.  **Analyze Document 5:** Discusses implementing a checklist for each prenatal control, mentions risk assessment, and screening, but doesn't specify the ideal *number* of controls.\n\n8.  **Synthesize the findings:**\n    *   Document 1: Mentions supervision, duration.\n    *   Document 2: Links *fewer* controls to *increased* mortality.\n    *   Document 3: Focuses on monitoring fetal well-being.\n    *   Document 4: Compares reduced (44) vs. standard (49) controls, suggesting reduced *might* be equally effective as higher (10-12).\n    *   Document 5: Mentions checklists and risk assessment.\n\n9.  **Address the \"ideal\" aspect:** The question asks for the *ideal* number. The documents don't explicitly state a single \"ideal\" number. Document 4 suggests that a reduced number (like 44) *might* be",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.9523809523809523,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.7499999999625,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Cuál es la cantidad ideal de controles prenatales?",
+            "execution_time": 10.233768939971924,
+            "input_tokens": 926,
+            "output_tokens": 512,
+            "total_cost": 0.0051168845,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 5,
+      "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+      "ground_truth": "Se recomienda evaluar el riesgo biológico y psicosocial a todas las gestantes mediante la escala de Herrera & Hurtado",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know *which tool* is used for psychosocial risk assessment during prenatal controls.\n\n2.  **Scan the documents for keywords:** Look for terms like \"herramienta,\" \"evaluación,\" \"riesgo,\" \"psicosocial,\" \"control prenatal,\" \"escalas,\" \"entrevista.\"\n\n3.  **Analyze Document 1:** Mentions evaluating psychosocial factors and recommends routine evaluation, but doesn't specify a *tool*. It mentions scales *could* be used but doesn't name one.\n\n4.  **Analyze Document 2:** Explicitly states: \"Se recomienda que las gestantes de bajo riesgo reciban en el momento de la inscripción al control prenatal, y luego en cada trimestre, una valoración de riesgo psicosocial.\" It also mentions: \"ción de violencia se realice por medio de una entrevista en todas las consultas de control prenatal.\" This points towards an *interview* as a method, but not a specific *tool* or *scale*.\n\n5.  **Analyze Document 3:** Discusses the *purpose* of psychosocial risk evaluation (identifying problems, defining referrals) and mentions a multidisciplinary team. It doesn't name a specific tool.\n\n6.  **Analyze Document 4:** Mentions comparing an \"Antenatal Psychosocial Health Assessment\" (ALPHA) scale with routine prenatal control for detecting psychosocial risks. It states the scale identified *more* problems. This identifies a specific *scale* (ALPHA) as a tool used for this purpose.\n\n7.  **Analyze Document 5:** Discusses implementing a checklist and mentions the *purpose* of psychosocial and biological risk evaluation (part of the initial consultation, screening for team needs). It doesn't name a specific tool.\n\n8.  **Synthesize the findings:**\n    *   Documents 1, 2, 3, and 5 discuss the *need* for psychosocial risk evaluation and *methods* (interview, scales, checklists).\n    *   Document 4 specifically names a *scale* (ALPHA) that is used for this purpose and found to be more effective than routine control.\n    *   Document 2 mentions an *interview* is used for violence screening.\n\n9.  **Formulate the answer:**\n    *   Start by directly addressing the question.\n    *   State that the context doesn't explicitly name *one single* tool universally recommended.",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.7368421052631579,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.94999999997625,
+            "context_recall": 0.0
+          },
+          "performance": {
+            "question": "¿Con cuál herramienta realizo la valoración de riesgo psico social en los controles prenatales?",
+            "execution_time": 10.589256048202515,
+            "input_tokens": 887,
+            "output_tokens": 512,
+            "total_cost": 0.005294628,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 6,
+      "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+      "ground_truth": "Se recomienda que las gestantes de bajo riesgo reciban en el momento de la inscripción al control prenatal, y luego en cada trimestre, una valoración de riesgo psicosocial",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know *when* psychosocial risk assessment should be performed during prenatal care.\n\n2.  **Scan the documents for keywords:** Look for terms like \"riesgo psicosocial,\" \"evaluación,\" \"valoración,\" \"seguimiento,\" \"control prenatal,\" \"trimestre,\" \"inscripción,\" \"consultas.\"\n\n3.  **Analyze Document 1:** Mentions \"ción de violencia se realice por medio de una entrevista en todas las consultas de control prenatal\" and \"Se recomienda que las gestantes de bajo riesgo reciban... una valoración de riesgo psicosocial. Si se identifica riesgo se deben remitir a una consulta especializada garantizando la continuidad con el grupo a cargo del control.\" This suggests assessment is done during prenatal care, specifically for low-risk patients, and referral happens if risk is identified. It doesn't specify *when* during the pregnancy, just that it's part of the routine.\n\n4.  **Analyze Document 2:** States \"se recomienda que estos sean evaluados rutinariamente durante el control prenatal.\" It also mentions \"No existe consenso de la manera como se deben explorar estos factores de riesgo, si de manera informal o mediante una escala de clasificación de riesgo.\" This confirms routine evaluation during prenatal care but doesn't specify the timing (e.g., at the start, each trimester).\n\n5.  **Analyze Document 3:** Discusses the *use* of scales (like Herrera & Hurtado) to classify risk (high vs. low) and associate high risk with adverse outcomes (preterm birth, low birth weight). It mentions the scale is used from weeks 14-27, 28-32, and 33-42. This gives a specific timeframe for *using* the scale, but not necessarily the *initial* or *routine* assessment timing.\n\n6.  **Analyze Document 4:** Recommends evaluating \"estrés materno crónico, la ansiedad, los trastornos del sueño y el pobre apoyo de la red social\" in *each* trimester. It also recommends identifying maternal depression via quarterly screening due to increased risk of preterm birth and low birth weight. This provides specific timing: *each trimester* and *quarterly* for depression screening.\n\n7.  **Analyze Document 5:** Mentions the need to classify patients into low-risk (with general nurse/doctor) or high-risk (with",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.8235294117647058,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuándo realizar la valoración de riesgo psico social en el seguimiento de una materna?",
+            "execution_time": 10.516010999679565,
+            "input_tokens": 912,
+            "output_tokens": 512,
+            "total_cost": 0.0052580055,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 7,
+      "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+      "ground_truth": "Se recomienda que, en el primer control prenatal, en la semana 28 de gestación y en la consulta de puerperio se identifique el riesgo de depresión postparto",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the frequency of depression screening during pregnancy based *only* on the provided medical context.\n\n2.  **Scan the documents for keywords:** Look for \"tamizaje\", \"depresión posparto\", \"embarazo\", \"frecuencia\", \"cuanto\", \"trimestre\", \"semana\", \"control prenatal\".\n\n3.  **Analyze Document 1:** Mentions screening effectiveness and risk percentages (16% and 52%), but doesn't specify the *frequency* of screening.\n\n4.  **Analyze Document 2:** Explicitly states: \"Se recomienda en cada trimestre del embarazo evaluar en la gestante, el estrés materno crónico, la ansiedad, los trastornos del sueño y el pobre apoyo de la red social.\" and \"Se recomienda identificar la depresión materna mediante un tamizaje trimestral durante el control prenatal porque las mujeres con depresión durante el embarazo tienen mayor riesgo de parto pretérmino y bajo peso al nacer.\" This directly answers the question.\n\n5.  **Analyze Document 3:** Mentions a specific tool (EPDS) and its effectiveness at different points (32 weeks vs. 8 weeks), but doesn't state the *overall* frequency recommendation.\n\n6.  **Analyze Document 4:** Mentions inquiring about mental health history and identifying risk in the first prenatal visit (week 28) and postpartum visit. It doesn't explicitly state the *frequency* of screening *during* pregnancy, but it does mention the first visit.\n\n7.  **Analyze Document 5:** Discusses the *type* of scales (semi-structured, 30-60 min) and the *timing* (different moments of prenatal control) but doesn't give a specific frequency like \"every trimester\".\n\n8.  **Synthesize the findings:** Document 2 is the most direct and specific document answering the question. It recommends screening \"en cada trimestre del embarazo\" (in each trimester of pregnancy).\n\n9.  **Formulate the answer in Spanish:**\n    *   Start with the direct answer based on Document 2.\n    *   Incorporate the supporting detail from Document 2 (screening in each trimester).\n    *   Ensure the answer is a single paragraph and flows well.\n    *   Check against the instructions: Base only on context, highest priority to relevant docs (Document 2 is highest), direct",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.8181818181818182,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cada cuanto se realiza el tamizaje para depresión posparto durante el embarazo?",
+            "execution_time": 10.985211372375488,
+            "input_tokens": 884,
+            "output_tokens": 512,
+            "total_cost": 0.0054926057,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 8,
+      "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+      "ground_truth": "La probabilidad de parto vaginal es de 74% luego de una cesárea sin otros riesgos asociados.",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the probability of a vaginal birth after a previous cesarean section (VBAC).\n\n2.  **Scan the documents for keywords:** Look for \"probabilidad\", \"parto vaginal\", \"cesárea\", \"VBAC\", \"riesgo\", \"seguro\", \"riesgos\", \"beneficios\", \"opción razonable\", \"segura\".\n\n3.  **Analyze Document 1:** Mentions \"probabilidad de parto vaginal es de 74%\" for women opting for a trial of labor after a previous cesarean (TOLAC). This is a direct answer.\n\n4.  **Analyze Document 2:** States that evidence shows TOLAC is \"razonable y segura\" and that \"los riesgos de un resultado adverso materno y neonatal son similares\" compared to elective cesarean. This supports the safety aspect but doesn't give a specific probability number.\n\n5.  **Analyze Document 3:** Discusses VBAC and the risk-benefit relationship. It mentions that \"En 28 a 70% de gestantes con antecedente de cesárea se realizó una prueba de trabajo de parto (PTP).\" This gives a range, but it's about the *rate* of attempting TOLAC, not the *probability* of success (vaginal birth). It also mentions factors associated with vaginal birth *after* TOLAC (previous vaginal birth, etc.) but not the overall probability.\n\n6.  **Analyze Document 4:** Mentions a cohort study with 13,331 women. It discusses the association between interval length and maternal outcomes (uterine rupture, morbidity, transfusion need) but doesn't state the overall probability of vaginal birth.\n\n7.  **Analyze Document 5:** Mentions a systematic review with 9 studies. It discusses outcomes like spontaneous labor, instrumental vaginal birth, and cesarean indication but doesn't state the overall probability of vaginal birth.\n\n8.  **Synthesize the findings:**\n    *   Document 1 provides the most direct answer: 74%.\n    *   Documents 2, 3, 4, and 5 provide context about the safety and feasibility of TOLAC, the range of women who attempt it, and associated factors, but do not give a single, definitive probability figure like Document 1 does.\n\n9.  **Formulate the answer:**\n    *",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.8055555555287036,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuál es la probabilidad de parto vaginal luego de una cesárea?",
+            "execution_time": 10.6510009765625,
+            "input_tokens": 942,
+            "output_tokens": 512,
+            "total_cost": 0.0053255005,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 9,
+      "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+      "ground_truth": "Se recomienda registrar el Índice de Masa Corporal (IMC) de la gestante en la cita de inscripción al control prenatal (alrededor de la semana 10) y con base en este establecer las metas de ganancia de peso durante la gestación de acuerdo a los siguientes parámetros: • IMC < 20 kg/m2 = ganancia entre 12 a 18 Kg • IMC entre 20 y 24,9 kg/m2 = ganancia entre 10 a 13 Kg • IMC entre 25 y 29,9 kg/m2 = ganancia entre 7 a 10 Kg • IMC > 30 kg/m2 = ganancia entre 6 a 7 Kg",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the weight gain targets for pregnant women based *only* on the provided medical context.\n\n2.  **Scan the context for keywords:** Look for \"metas de ganancia de peso,\" \"ganancia de peso,\" \"peso,\" \"gestante,\" \"embarazo,\" \"IMC,\" etc.\n\n3.  **Locate relevant documents:**\n    *   Document 1 mentions \"metas de ganancia de peso\" and \"seguimiento de la ganancia de peso.\" It also mentions a multidisciplinary team for inadequate gain.\n    *   Document 2 mentions \"ganancia de peso\" and \"IMC pregestacional <19,8 kg/m2.\" It provides OR values but not the actual target ranges.\n    *   Document 3 explicitly states \"establecer las metas de ganancia de peso durante la gestación\" based on \"IMC.\" It lists specific ranges for different IMC categories.\n    *   Document 4 repeats the ranges from Document 3.\n    *   Document 5 mentions \"ganancia de peso al nacer\" and \"restricción proteico-calórica\" in the context of overweight/obesity, but doesn't provide the *target* gain for *all* pregnant women.\n\n4.  **Synthesize the information from the most relevant documents (Documents 3 and 4):** These documents provide the specific ranges for different BMI categories.\n\n5.  **Extract the specific ranges:**\n    *   IMC < 20 kg/m2: ganancia entre 12 a 18 Kg\n    *   IMC entre 20 y 24,9 kg/m2: ganancia entre 10 a 13 Kg\n    *   IMC entre 25 y 29,9 kg/m2: ganancia entre 7 a 10 Kg\n    *   IMC > 30 kg/m2: ganancia entre 6 a 7 Kg\n\n6.  **Formulate the answer in Spanish:** Start with a direct answer, then integrate the extracted ranges.\n\n    *   *Direct answer:* Las metas de ganancia de peso en las mujeres gestantes se establecen según su Índice de Masa Corporal (IMC).\n    *   *Integrate ranges:* Según el contexto, las metas de ganancia de peso durante la gestación son las siguientes,",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8779879355672205,
+            "context_precision": 0.999999999975,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "¿Cuáles son las metas de ganancia de peso en las mujeres gestantes?",
+            "execution_time": 10.751303672790527,
+            "input_tokens": 1107,
+            "output_tokens": 512,
+            "total_cost": 0.0053756518,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    },
+    {
+      "question_id": 10,
+      "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+      "ground_truth": "A juicio del médico tratante, las intervenciones recomendadas para la reducción de la náusea y el vómito incluyen el jengibre, los antihistamínicos y la vitamina B6",
+      "rag_results": {
+        "simple": {
+          "answer": "<unused94>thought\n1.  **Identify the core question:** The user wants to know the recommended treatment for nausea and vomiting in pregnancy.\n\n2.  **Scan the documents for keywords:** Look for \"tratar\", \"tratamiento\", \"nausea\", \"vómito\", \"embarazo\", \"recomendado\", \"eficaces\".\n\n3.  **Analyze Document 1:** Mentions ginger (jengibre) as a treatment studied in a specific ECC (70 patients). It doesn't list *all* recommended treatments but highlights ginger.\n\n4.  **Analyze Document 2:** Explicitly lists \"jengibre, los antihistamínicos y la vitamina B6\" as recommended interventions. It also provides general information about the condition and its resolution.\n\n5.  **Analyze Document 3:** Broadens the scope, mentioning \"intervenciones no farmacológicas basadas en cambios en el hábito alimenticio, uso de jengibre y acupuntura\" and \"intervenciones farmacológicas como los antihistamínicos\". It confirms ginger and antihistamines as effective.\n\n6.  **Analyze Document 4:** Seems to be a repetition/reordering of the question and a reference number (9). It doesn't add new treatment information.\n\n7.  **Analyze Document 5:** Discusses specific studies (ECC, OR, RR, IC 95%) comparing pyridoxine (vitamin B6), antihistamines, and ginger. It confirms antihistamines and ginger as effective based on these studies, noting potential side effects (somnolence) with antihistamines.\n\n8.  **Synthesize the findings:** Combine the information from the most relevant documents (2, 3, and 5).\n    *   Ginger (jengibre) is recommended.\n    *   Antihistamines (antihistamínicos) are recommended.\n    *   Vitamin B6 (piridoxina) is mentioned as a treatment in one study.\n    *   Non-pharmacological interventions like dietary changes are also mentioned.\n    *   Studies confirm the effectiveness of ginger and antihistamines.\n    *   Antihistamines have potential side effects (somnolence).\n\n9.  **Formulate the answer in Spanish:** Start with a direct answer, then incorporate the details.\n    *   Direct answer: The recommended treatments include ginger, antihistamines, and vitamin B6.\n    *   Add details: Mention that these are based",
+          "contexts_count": 1,
+          "metrics": {
+            "faithfulness": 0.9090909090909091,
+            "answer_relevancy": 0.9006923691835684,
+            "context_precision": 0.99999999998,
+            "context_recall": 1.0
+          },
+          "performance": {
+            "question": "Cual es el tratamiento para las nauseas y vomito del embarazo",
+            "execution_time": 11.36644721031189,
+            "input_tokens": 1001,
+            "output_tokens": 512,
+            "total_cost": 0.0056832236,
+            "cost_source": "estimated_hf_endpoint_pricing"
+          }
+        }
+      }
+    }
+  ]
+}

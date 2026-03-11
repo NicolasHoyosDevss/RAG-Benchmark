@@ -18,6 +18,7 @@ from pageindex import PageIndexAPIError, PageIndexClient
 
 from src.common.model_provider import get_model_identity
 from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
+from src.common.pricing import resolve_total_cost
 
 
 # --- Environment and Path Configuration ---
@@ -251,6 +252,16 @@ def query_for_evaluation(
     execution_time = time.time() - start_time
     input_tokens = result["metrics"]["input_tokens"]
     output_tokens = result["metrics"]["output_tokens"]
+    resolved_cost = resolve_total_cost(
+        provider=model_identity["provider"],
+        model_name=model_identity["model_name"],
+        model_id=model_identity["model_id"],
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+        provider_reported_cost=result["metrics"]["cost"],
+        provider_cost_source=result["metrics"]["cost_source"],
+        execution_time_seconds=execution_time,
+    )
 
     return {
         "question": question,
@@ -266,10 +277,10 @@ def query_for_evaluation(
             "execution_time": execution_time,
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
-            "total_cost": result["metrics"]["cost"],
+            "total_cost": resolved_cost["total_cost"],
             "tokens_used": input_tokens + output_tokens,
             "usage_source": result["metrics"]["usage_source"],
-            "cost_source": result["metrics"]["cost_source"],
+            "cost_source": resolved_cost["cost_source"],
             "doc_id": result["metrics"]["doc_id"],
             "retrieval_id": result["metrics"]["retrieval_id"],
             "pageindex_thinking": thinking,

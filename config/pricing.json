@@ -1,0 +1,50 @@
+{
+  "openai_token_pricing_per_1m": {
+    "gpt-4o": {
+      "input": 2.5,
+      "output": 10.0,
+      "pricing_source_url": "https://developers.openai.com/api/pricing/",
+      "pricing_updated_at": "2026-03-11"
+    },
+    "gpt-5": {
+      "input": 1.25,
+      "output": 15.0,
+      "pricing_source_url": "https://developers.openai.com/api/pricing/",
+      "pricing_updated_at": "2026-03-11"
+    },
+    "gpt-5.2": {
+      "input": 1.75,
+      "output": 14.0,
+      "pricing_source_url": "https://developers.openai.com/api/pricing/",
+      "pricing_updated_at": "2026-03-11"
+    }
+  },
+  "huggingface_endpoints": {
+    "mediphi": {
+      "cloud_provider": "aws",
+      "instance_family": "nvidia-L4",
+      "instance_size": "x1",
+      "accelerator": "NVIDIA L4",
+      "gpu_count": 1,
+      "vram_gb": 24,
+      "hourly_rate_usd": 0.8,
+      "replicas": 1,
+      "allocation_mode": "runtime_proportional",
+      "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+      "pricing_updated_at": "2026-03-11"
+    },
+    "medgemma": {
+      "cloud_provider": "aws",
+      "instance_family": "nvidia-A10G",
+      "instance_size": "x1",
+      "accelerator": "NVIDIA A10G",
+      "gpu_count": 1,
+      "vram_gb": 24,
+      "hourly_rate_usd": 1,
+      "replicas": 1,
+      "allocation_mode": "runtime_proportional",
+      "pricing_source_url": "https://huggingface.co/docs/inference-endpoints/pricing",
+      "pricing_updated_at": "2026-03-11"
+    }
+  }
+}

@@ -191,16 +191,16 @@ MODELS_REGISTRY: Dict[str, ModelConfig] = {
         provider="openai",
         temperature=0.0
     ),
-    "mediphi": ModelConfig(
+    "microsoft/MediPhi-Instruct": ModelConfig(
         name="mediphi",
-        model_id="microsoft/MediPhi",
+        model_id="microsoft/MediPhi-Instruct",
         provider="huggingface",
         endpoint_url_env="MEDIPHI_ENDPOINT_URL",
         temperature=0.0
     ),
-    "medgemma": ModelConfig(
+    "google/medgemma-1.5-4b-it": ModelConfig(
         name="medgemma",
-        model_id="google/medgemma-4b-it",
+        model_id="google/medgemma-1.5-4b-it",
         provider="huggingface",
         endpoint_url_env="MEDGEMMA_ENDPOINT_URL",
         temperature=0.0

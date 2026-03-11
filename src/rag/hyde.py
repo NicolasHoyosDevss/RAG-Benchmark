@@ -21,6 +21,7 @@ from langchain_core.language_models import BaseChatModel
 
 from src.common.model_provider import get_model_identity
 from src.common.usage_metrics import extract_usage_from_ai_message, extract_cost_from_ai_message
+from src.common.pricing import resolve_total_cost
 
 # --- Environment and Path Configuration ---
 
@@ -266,6 +267,16 @@ def query_for_evaluation(question: str, hyde_model: str = None, answer_model: st
     result = process_hyde_query(question, final_hyde_llm, final_answer_llm)
     end_time = time.time()
     execution_time = end_time - start_time
+    resolved_cost = resolve_total_cost(
+        provider=answer_model_identity["provider"],
+        model_name=answer_model_identity["model_name"],
+        model_id=answer_model_identity["model_id"],
+        input_tokens=result["total_input_tokens"],
+        output_tokens=result["total_output_tokens"],
+        provider_reported_cost=result["total_cost"],
+        provider_cost_source="+".join(result["cost_sources"]),
+        execution_time_seconds=execution_time,
+    )
 
     return {
         "question": question,
@@ -275,7 +286,7 @@ def query_for_evaluation(question: str, hyde_model: str = None, answer_model: st
             "execution_time": execution_time,
             "input_tokens": result["total_input_tokens"],
             "output_tokens": result["total_output_tokens"],
-            "total_cost": result["total_cost"],
+            "total_cost": resolved_cost["total_cost"],
             "retrieval_method": "hyde",
             "llm_hyde_model": hyde_model_identity["model_name"],
             "llm_answer_model": answer_model_identity["model_name"],
@@ -286,7 +297,7 @@ def query_for_evaluation(question: str, hyde_model: str = None, answer_model: st
             "hyde_cost": result["hyde_metrics"]["cost"],
             "answer_cost": result["answer_metrics"]["cost"],
             "usage_source": "+".join(result["usage_sources"]),
-            "cost_source": "+".join(result["cost_sources"]),
+            "cost_source": resolved_cost["cost_source"],
         }
     }
 
